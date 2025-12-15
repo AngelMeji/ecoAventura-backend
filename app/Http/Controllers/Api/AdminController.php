@@ -12,7 +12,18 @@ class AdminController extends Controller
 {
     /**
      * Dashboard del Administrador
-     * Muestra estadísticas globales del sistema.
+     * Muestra estadísticas básicas del sistema.
+     */
+    public function dashboard(Request $request)
+    {
+        return response()->json([
+            'message' => 'Dashboard de administrador',
+            'user' => $request->user(),
+        ]);
+    }
+
+    /**
+     * Estadísticas completas para el panel admin
      */
     // ESTADÍSTICAS REALES
     public function stats()

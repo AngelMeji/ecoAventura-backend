@@ -49,6 +49,22 @@ class Place extends Model
     }
 
     /**
+     * Registros de favoritos de este lugar
+     */
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Usuarios que marcaron este lugar como favorito
+     */
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites');
+    }
+
+    /**
      * Todas las imágenes del lugar
      */
     public function images(): HasMany

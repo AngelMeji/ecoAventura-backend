@@ -4,7 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -14,12 +13,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // API middleware - solo CORS para APIs con token Bearer
         $middleware->api(prepend: [
             HandleCors::class,
-            EnsureFrontendRequestsAreStateful::class,
         ]);
+
+        // Alias de middleware personalizados
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
+
+        // Excluir rutas API de verificación CSRF
+        $middleware->validateCsrfTokens(except: [
+            'api/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
