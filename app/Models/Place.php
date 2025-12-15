@@ -5,12 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Place extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
         'category_id',
@@ -22,84 +20,68 @@ class Place extends Model
         'latitude',
         'longitude',
         'is_featured',
-        'status',
-        'difficulty',
-        'duration',
-        'best_season',
+        'status'
     ];
 
-    /* Atributos calculados que se agregan al JSON */
-    protected $appends = ['is_favorite', 'average_rating'];
+    protected $casts = [
+        'is_featured' => 'boolean',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
+    ];
 
-    /* Relaciones Eloquent */
+    /* =======================
+       Relaciones Eloquent
+       ======================= */
 
-    // Creador del lugar (socio / admin)
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Categoría del lugar
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    // Reseñas del lugar
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
     }
 
-    // Favoritos del lugar
-    public function favorites(): HasMany
-    {
-        return $this->hasMany(Favorite::class);
-    }
-
-    // Favoritos del lugar (Pivot logic for stats)
-    public function favoritedBy()
-    {
-        return $this->belongsToMany(User::class, 'favorites', 'place_id', 'user_id');
-    }
-
-    // Imágenes del lugar
+    /**
+     * Todas las imágenes del lugar
+     */
     public function images(): HasMany
     {
-        return $this->hasMany(PlaceImage::class);
+        return $this->hasMany(PlaceImage::class)->orderBy('order');
     }
 
-    /* Accessors */
-
-    /* Indica si el lugar es favorito del usuario autenticado */
-    public function getIsFavoriteAttribute(): bool
+    /**
+     * Imagen principal del lugar
+     */
+    public function primaryImage(): HasOne
     {
-        // Optimización: si se usó withExists('favorites')
-        if (array_key_exists('favorites_exists', $this->attributes)) {
-            return $this->attributes['favorites_exists'];
-        }
-
-        if (!auth()->check()) {
-            return false;
-        }
-
-        // Optimización: si la relación ya está cargada
-        if ($this->relationLoaded('favorites')) {
-            return $this->favorites->contains('user_id', auth()->id());
-        }
-
-        return $this->favorites()
-            ->where('user_id', auth()->id())
-            ->exists();
+        return $this->hasOne(PlaceImage::class)->where('is_primary', true);
     }
 
-    /* Promedio de calificación del lugar */
-    public function getAverageRatingAttribute(): float
-    {
-        if ($this->relationLoaded('reviews')) {
-            return round($this->reviews->avg('rating'), 1);
-        }
+    /* =======================
+       Accessors
+       ======================= */
 
-        return round($this->reviews()->avg('rating') ?? 0, 1);
+    /**
+     * Obtener la URL de la imagen principal o la primera imagen
+     */
+    public function getPrimaryImageUrlAttribute(): ?string
+    {
+        $primary = $this->primaryImage ?? $this->images->first();
+        return $primary?->url;
+    }
+
+    /**
+     * Obtener todas las URLs de las imágenes
+     */
+    public function getImageUrlsAttribute(): array
+    {
+        return $this->images->pluck('url')->toArray();
     }
 }

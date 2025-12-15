@@ -7,67 +7,58 @@ use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\FavoriteController;
-use App\Http\Controllers\Api\ReviewController; // Ensure this is imported
-use App\Http\Controllers\Api\ProfileController;
 
-/* ---------- AUTH (Public) ---------- */
+/* =============================================
+   RUTAS PÚBLICAS (sin autenticación)
+   ============================================= */
+
+// Auth
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-/* ---------- CATEGORÍAS (Public) ---------- */
+// Categorías (público)
 Route::get('/categories', [CategoryController::class, 'index']);
-// Place List (Public)
+Route::get('/categories/{category}', [CategoryController::class, 'show']);
+
+// Lugares (público - solo aprobados)
 Route::get('/places', [PlaceController::class, 'index']);
-Route::get('/places/{id}', [PlaceController::class, 'show']);
+Route::get('/places/{slug}', [PlaceController::class, 'show']);
 
-/* ---------- PROTECTED ROUTES ---------- */
-Route::middleware(['auth:sanctum'])->group(function () {
+/* =============================================
+   RUTAS PROTEGIDAS (requieren autenticación)
+   ============================================= */
 
-    // AUTH & PROFILE
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Usuario autenticado
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::put('/me/password', [ProfileController::class, 'updatePassword']);
 
-    // PLACES (Resource)
-    Route::apiResource('places', PlaceController::class)->except(['index', 'show']); // Index/Show are public
+    /* ---------- Usuario normal ---------- */
+    Route::middleware('role:user,partner,admin')->group(function () {
+        Route::get('/user/dashboard', [UserController::class, 'dashboard']);
+    });
 
-    // Approval Workflow
-    Route::patch('/places/{id}/approve', [PlaceController::class, 'approve']);
-    Route::patch('/places/{id}/reject', [PlaceController::class, 'reject']);
-    Route::patch('/places/{id}/needs-fix', [PlaceController::class, 'needsFix']); // Added back as it was useful
+    /* ---------- Socio (Partner) ---------- */
+    Route::middleware('role:partner,admin')->group(function () {
+        Route::get('/partner/dashboard', [PartnerController::class, 'dashboard']);
+        
+        // Mis lugares (CRUD para socios)
+        Route::get('/partner/places', [PlaceController::class, 'myPlaces']);
+        Route::post('/partner/places', [PlaceController::class, 'store']);
+        Route::put('/partner/places/{place}', [PlaceController::class, 'update']);
+        Route::delete('/partner/places/{place}', [PlaceController::class, 'destroy']);
+    });
 
-    // REVIEWS
-    Route::get('/reviews', [ReviewController::class, 'index']);
-    Route::post('/places/{placeId}/reviews', [ReviewController::class, 'store']);
-    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+    /* ---------- Admin ---------- */
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+        
+        // Gestión de lugares (admin)
+        Route::get('/admin/places', [PlaceController::class, 'adminIndex']);
+        Route::patch('/admin/places/{place}/status', [PlaceController::class, 'updateStatus']);
+        Route::put('/admin/places/{place}', [PlaceController::class, 'update']);
+        Route::delete('/admin/places/{place}', [PlaceController::class, 'destroy']);
+    });
 
-    // ADMIN DASHBOARD & MANAGEMENT
-    Route::get('/admin/dashboard', [AdminController::class, 'stats']);
-    Route::get('/admin/places/pending', [AdminController::class, 'pendingPlaces']);
-    Route::get('/admin/places', [AdminController::class, 'allPlaces']); // Nueva ruta para ver todos
-
-    // User Profile (Exact match as requested)
-    Route::match(['put', 'post'], '/me/profile', [ProfileController::class, 'update']);
-
-    // ADMIN USER MANAGEMENT
-    Route::get('/admin/users', [AdminController::class, 'indexUsers']);
-    Route::post('/admin/users', [AdminController::class, 'createUser']);
-    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
-    Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']); // Mapped to destroyUser
-
-    // PARTNER & USER DASHBOARDS
-    Route::get('/partner/dashboard', [PartnerController::class, 'dashboard']);
-    Route::get('/user/dashboard', [UserController::class, 'dashboard']);
-
-    // FAVORITES
-    Route::get('/favorites', [FavoriteController::class, 'index']);
-    Route::post('/favorites', [FavoriteController::class, 'store']);
-    Route::delete('/favorites/{placeId}', [FavoriteController::class, 'destroy']);
-
-    // CATEGORIES (Admin management)
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::put('/categories/{id}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 });
