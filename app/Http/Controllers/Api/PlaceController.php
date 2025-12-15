@@ -17,30 +17,44 @@ class PlaceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Place::with(['category', 'images', 'user:id,name'])
-            ->where('status', 'approved');
+        try {
+            $query = Place::with(['category', 'images', 'primaryImage', 'user:id,name'])
+                ->where('status', 'approved');
 
-        // Filtros opcionales
-        if ($request->has('category_id')) {
-            $query->where('category_id', $request->category_id);
+            // Filtros opcionales
+            if ($request->has('category_id')) {
+                $query->where('category_id', $request->category_id);
+            }
+
+            if ($request->has('featured')) {
+                $query->where('is_featured', $request->boolean('featured'));
+            }
+
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('short_description', 'like', "%{$search}%")
+                      ->orWhere('address', 'like', "%{$search}%");
+                });
+            }
+
+            $places = $query->latest()->paginate($request->per_page ?? 12);
+
+            return response()->json($this->formatPlacesResponse($places));
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al cargar lugares',
+                'error' => $e->getMessage(),
+                'data' => [],
+                'meta' => [
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'per_page' => 12,
+                    'total' => 0,
+                ],
+            ], 500);
         }
-
-        if ($request->has('featured')) {
-            $query->where('is_featured', $request->boolean('featured'));
-        }
-
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('short_description', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%");
-            });
-        }
-
-        $places = $query->latest()->paginate($request->per_page ?? 12);
-
-        return response()->json($this->formatPlacesResponse($places));
     }
 
     /**
