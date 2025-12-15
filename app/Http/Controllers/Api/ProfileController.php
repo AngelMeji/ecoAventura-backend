@@ -60,17 +60,16 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // Devolver usuario directamente (sin wrapper) para compatibilidad con frontend
         return response()->json([
-            'message' => 'Perfil actualizado correctamente',
-            'data' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-                'bio' => $user->bio,
-                'avatar' => $user->avatar ? Storage::disk('public')->url($user->avatar) : null,
-                'notifications' => $user->notifications,
-            ],
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'bio' => $user->bio,
+            'avatar' => $user->avatar ? Storage::disk('public')->url($user->avatar) : null,
+            'notifications' => $user->notifications,
+            'created_at' => $user->created_at?->toIso8601String(),
         ]);
     }
 
