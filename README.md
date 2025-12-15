@@ -259,6 +259,40 @@ Authorization: Bearer 1|abc123def456...
 
 ---
 
+## 🧩 Modelos de Datos Principales
+
+### Place (Lugar)
+Tabla: `places`
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | bigint | ID único |
+| `user_id` | foreignId | Usuario creador (Partner/Admin) |
+| `category_id` | foreignId | Categoría del lugar |
+| `name` | string | Nombre del lugar |
+| `slug` | string | URL amigable (único) |
+| `short_description` | string | Breve descripción para tarjetas |
+| `description` | text | Descripción completa (opcional) |
+| `address` | string | Dirección física (opcional) |
+| `latitude` | decimal | Coordenada: Latitud |
+| `longitude` | decimal | Coordenada: Longitud |
+| `is_featured` | boolean | ¿Destacado en home? (Solo Admin) |
+| `status` | enum | `pending`, `approved`, `rejected`, `needs_fix` |
+
+### PlaceImage (Imágenes de Lugar)
+Tabla: `place_images`
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | bigint | ID único |
+| `place_id` | foreignId | Lugar asociado |
+| `path` | string | Ruta relativa en `storage/app/public` |
+| `filename` | string | Nombre original del archivo |
+| `is_primary` | boolean | ¿Es la imagen principal? |
+| `order` | integer | Orden de visualización |
+
+---
+
 ## 📁 Estructura del Proyecto
 
 ```
