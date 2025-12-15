@@ -8,77 +8,66 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\ReviewController; // Ensure this is imported
+use App\Http\Controllers\Api\ProfileController;
 
-/* ---------- Auth ---------- */
+/* ---------- AUTH (Public) ---------- */
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-/* ---------- CATEGORÍAS (PÚBLICO) ---------- */
+/* ---------- CATEGORÍAS (Public) ---------- */
 Route::get('/categories', [CategoryController::class, 'index']);
+// Place List (Public)
+Route::get('/places', [PlaceController::class, 'index']);
+Route::get('/places/{id}', [PlaceController::class, 'show']);
 
-/* ---------- Protegidas ---------- */
-Route::middleware('auth:sanctum')->group(function () {
+/* ---------- PROTECTED ROUTES ---------- */
+Route::middleware(['auth:sanctum'])->group(function () {
 
-    /* ---------- SESIÓN ---------- */
+    // AUTH & PROFILE
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/me/password', [ProfileController::class, 'updatePassword']);
 
-    /* ---------- DASHBOARDS ---------- */
+    // PLACES (Resource)
+    Route::apiResource('places', PlaceController::class)->except(['index', 'show']); // Index/Show are public
 
-    /* Usuario normal */
-    Route::middleware('role:user,partner,admin')->get(
-        '/user/dashboard',
-        [UserController::class, 'dashboard']
-    );
+    // Approval Workflow
+    Route::patch('/places/{id}/approve', [PlaceController::class, 'approve']);
+    Route::patch('/places/{id}/reject', [PlaceController::class, 'reject']);
+    Route::patch('/places/{id}/needs-fix', [PlaceController::class, 'needsFix']); // Added back as it was useful
 
-    /* Socio */
-    Route::middleware('role:partner,admin')->get(
-        '/partner/dashboard',
-        [PartnerController::class, 'dashboard']
-    );
+    // REVIEWS
+    Route::get('/reviews', [ReviewController::class, 'index']);
+    Route::post('/places/{placeId}/reviews', [ReviewController::class, 'store']);
+    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 
-    /* Admin */
-    Route::middleware('role:admin')->get(
-        '/admin/dashboard',
-        [AdminController::class, 'dashboard']
-    );
+    // ADMIN DASHBOARD & MANAGEMENT
+    Route::get('/admin/dashboard', [AdminController::class, 'stats']);
+    Route::get('/admin/places/pending', [AdminController::class, 'pendingPlaces']);
+    Route::get('/admin/places', [AdminController::class, 'allPlaces']); // Nueva ruta para ver todos
 
-    /* ---------- CATEGORÍAS (ADMIN) ---------- */
-    Route::middleware('role:admin')->group(function () {
-        Route::post('/categories', [CategoryController::class, 'store']);
-        Route::put('/categories/{id}', [CategoryController::class, 'update']);
-        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-    });
+    // User Profile (Exact match as requested)
+    Route::match(['put', 'post'], '/me/profile', [ProfileController::class, 'update']);
 
-    // LUGARES
+    // ADMIN USER MANAGEMENT
+    Route::get('/admin/users', [AdminController::class, 'indexUsers']);
+    Route::post('/admin/users', [AdminController::class, 'createUser']);
+    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
+    Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']); // Mapped to destroyUser
 
-    // Públicos (solo aprobados)
-    Route::get('/places', [PlaceController::class, 'index']);
-    Route::get('/places/{slug}', [PlaceController::class, 'show']);
+    // PARTNER & USER DASHBOARDS
+    Route::get('/partner/dashboard', [PartnerController::class, 'dashboard']);
+    Route::get('/user/dashboard', [UserController::class, 'dashboard']);
 
-    // Crear / editar (partner / admin)
-    Route::middleware('role:partner,admin')->group(function () {
-        Route::post('/places', [PlaceController::class, 'store']);
-        Route::put('/places/{id}', [PlaceController::class, 'update']);
-    });
-
-    // Eliminar (solo admin)
-    Route::delete('/places/{id}', [PlaceController::class, 'destroy'])
-        ->middleware('role:admin');
-
-    // MODERACIÓN DE LUGARES (ADMIN)
-    Route::middleware('role:admin')->group(function () {
-        // Lugares pendientes
-        Route::get('/admin/places/pending', [PlaceController::class, 'pending']);
-
-        // Moderación
-        Route::patch('/places/{id}/approve', [PlaceController::class, 'approve']);
-        Route::patch('/places/{id}/reject', [PlaceController::class, 'reject']);
-        Route::patch('/places/{id}/needs-fix', [PlaceController::class, 'needsFix']);
-    });
-
-    // Favoritos
+    // FAVORITES
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{placeId}', [FavoriteController::class, 'destroy']);
+
+    // CATEGORIES (Admin management)
+    Route::post('/categories', [CategoryController::class, 'store']);
+    Route::put('/categories/{id}', [CategoryController::class, 'update']);
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 });

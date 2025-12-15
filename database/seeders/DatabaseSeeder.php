@@ -3,23 +3,46 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\Category;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // 1. Crear usuario ADMIN
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Administrador',
+            'email' => 'admin@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
         ]);
+
+        // 2. Crear usuario PARTNER (Socio)
+        User::factory()->create([
+            'name' => 'Socio EcoAventura',
+            'email' => 'partner@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'partner',
+        ]);
+
+        // 3. Crear usuario USER (Normal)
+        User::factory()->create([
+            'name' => 'Usuario Test',
+            'email' => 'user@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'user',
+        ]);
+
+        // 4. Llamar al Seeder de Categorías
+        $this->call(CategorySeeder::class);
+
+        // 5. Llamar al Seeder de Lugares
+        $this->call(PlaceSeeder::class);
     }
 }

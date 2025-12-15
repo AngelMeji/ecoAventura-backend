@@ -42,12 +42,32 @@ class PlaceController extends Controller
      * VER DETALLE DE UN LUGAR
      * GET /api/places/{slug}
      */
-    public function show(string $slug)
+    public function show($identifier)
     {
-        $place = Place::with(['category', 'user', 'reviews.user', 'favorites'])
-            ->where('slug', $slug)
-            ->where('status', 'approved')
-            ->firstOrFail();
+        $query = Place::with(['category', 'user', 'reviews.user', 'favorites']);
+
+        // Si es ID
+        if (is_numeric($identifier)) {
+            $query->where('id', $identifier);
+        } else {
+            $query->where('slug', $identifier);
+        }
+
+        $place = $query->firstOrFail();
+
+        // Verificar visibilidad
+        // Si no es aprobado, SOLO admin o dueño pueden verlo
+        if ($place->status !== 'approved') {
+            $user = auth('sanctum')->user(); // Obtener usuario si hay token
+
+            if (!$user) {
+                abort(404, 'Lugar no encontrado');
+            }
+
+            if (!$user->isAdmin() && $user->id !== $place->user_id) {
+                abort(403, 'No tienes permiso para ver este lugar pendiente.');
+            }
+        }
 
         return response()->json($place);
     }
@@ -59,33 +79,48 @@ class PlaceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'              => 'required|string|max:255',
-            'category_id'       => 'required|exists:categories,id',
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'short_description' => 'required|string|max:255',
-            'description'       => 'nullable|string',
-            'address'           => 'nullable|string|max:255',
-            'latitude'          => 'nullable|numeric',
-            'longitude'         => 'nullable|numeric',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:5048',
+            'difficulty' => 'nullable|in:baja,media,alta,experto',
+            'duration' => 'nullable|string|max:255',
+            'best_season' => 'nullable|string|max:255',
         ]);
 
         $place = Place::create([
-            'user_id'           => $request->user()->id,
-            'category_id'       => $request->category_id,
-            'name'              => $request->name,
-            'slug'              => Str::slug($request->name) . '-' . uniqid(),
+            'user_id' => $request->user()->id,
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'slug' => Str::slug($request->name) . '-' . uniqid(),
             'short_description' => $request->short_description,
-            'description'       => $request->description,
-            'address'           => $request->address,
-            'latitude'          => $request->latitude,
-            'longitude'         => $request->longitude,
-            'status'            => $request->user()->isAdmin()
+            'description' => $request->description,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'status' => $request->user()->isAdmin()
                 ? 'approved'
                 : 'pending',
+            'difficulty' => $request->difficulty,
+            'duration' => $request->duration,
+            'best_season' => $request->best_season,
         ]);
+
+        // Subir imágenes
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('places', 'public');
+                $place->images()->create(['image_path' => $path]);
+            }
+        }
 
         return response()->json([
             'message' => 'Lugar creado correctamente',
-            'place'   => $place
+            'place' => $place->load('images')
         ], 201);
     }
 
@@ -99,7 +134,7 @@ class PlaceController extends Controller
 
         // Autorización manual (por ahora)
         if (
-            ! $request->user()->isAdmin() &&
+            !$request->user()->isAdmin() &&
             $place->user_id !== $request->user()->id
         ) {
             return response()->json([
@@ -108,14 +143,17 @@ class PlaceController extends Controller
         }
 
         $request->validate([
-            'name'              => 'sometimes|string|max:255',
-            'category_id'       => 'sometimes|exists:categories,id',
+            'name' => 'sometimes|string|max:255',
+            'category_id' => 'sometimes|exists:categories,id',
             'short_description' => 'sometimes|string|max:255',
-            'description'       => 'nullable|string',
-            'address'           => 'nullable|string|max:255',
-            'latitude'          => 'nullable|numeric',
-            'longitude'         => 'nullable|numeric',
-            'is_featured'       => 'boolean',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string|max:255',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'is_featured' => 'boolean',
+            'difficulty' => 'nullable|in:baja,media,alta,experto',
+            'duration' => 'nullable|string|max:255',
+            'best_season' => 'nullable|string|max:255',
         ]);
 
         /* Si cambia el nombre, cambia el slug */
@@ -132,11 +170,14 @@ class PlaceController extends Controller
             'latitude',
             'longitude',
             'is_featured',
+            'difficulty',
+            'duration',
+            'best_season',
         ]));
 
         return response()->json([
             'message' => 'Lugar actualizado correctamente',
-            'place'   => $place
+            'place' => $place
         ]);
     }
 
@@ -146,7 +187,7 @@ class PlaceController extends Controller
      */
     public function destroy(Request $request, int $id)
     {
-        if (! $request->user()->isAdmin()) {
+        if (!$request->user()->isAdmin()) {
             return response()->json([
                 'message' => 'Solo el administrador puede eliminar lugares'
             ], 403);
@@ -163,7 +204,7 @@ class PlaceController extends Controller
     /**
      * LISTAR LUGARES PENDIENTES (admin)
      * GET /api/admin/places/pending
-    */
+     */
     public function pending()
     {
         $places = Place::with(['category', 'user'])
@@ -175,8 +216,8 @@ class PlaceController extends Controller
     }
 
     /**
-    * APROBAR LUGAR (admin)
-    */
+     * APROBAR LUGAR (admin)
+     */
     public function approve(int $id)
     {
         $place = Place::findOrFail($id);

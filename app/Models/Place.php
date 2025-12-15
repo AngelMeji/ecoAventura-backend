@@ -22,7 +22,10 @@ class Place extends Model
         'latitude',
         'longitude',
         'is_featured',
-        'status'
+        'status',
+        'difficulty',
+        'duration',
+        'best_season',
     ];
 
     /* Atributos calculados que se agregan al JSON */
@@ -54,13 +57,35 @@ class Place extends Model
         return $this->hasMany(Favorite::class);
     }
 
+    // Favoritos del lugar (Pivot logic for stats)
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorites', 'place_id', 'user_id');
+    }
+
+    // Imágenes del lugar
+    public function images(): HasMany
+    {
+        return $this->hasMany(PlaceImage::class);
+    }
+
     /* Accessors */
 
     /* Indica si el lugar es favorito del usuario autenticado */
     public function getIsFavoriteAttribute(): bool
     {
+        // Optimización: si se usó withExists('favorites')
+        if (array_key_exists('favorites_exists', $this->attributes)) {
+            return $this->attributes['favorites_exists'];
+        }
+
         if (!auth()->check()) {
             return false;
+        }
+
+        // Optimización: si la relación ya está cargada
+        if ($this->relationLoaded('favorites')) {
+            return $this->favorites->contains('user_id', auth()->id());
         }
 
         return $this->favorites()
