@@ -3,115 +3,125 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Place;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
     /**
-     * Listar reseñas.
-     * GET /api/reviews
+     * Obtener reviews de un lugar
      */
-    public function index(Request $request)
+    public function index(Place $place)
     {
-        // Si es admin, puede ver todas (o filtrar por lugar)
-        if ($request->user()->isAdmin()) {
-            $query = Review::with(['user', 'place']);
-            if ($request->filled('place_id')) {
-                $query->where('place_id', $request->place_id);
-            }
-            return response()->json($query->latest()->get());
-        }
+        $reviews = $place->reviews()
+            ->with('user:id,name,avatar')
+            ->where('approved', true)
+            ->latest()
+            ->get();
 
-        // Si es user, ver sus propias reseñas
-        return response()->json($request->user()->reviews()->with('place')->latest()->get());
+        return response()->json([
+            'data' => $reviews->map(fn ($review) => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'user' => $review->user ? [
+                    'id' => $review->user->id,
+                    'name' => $review->user->name,
+                    'avatar' => $review->user->avatar,
+                ] : null,
+                'created_at' => $review->created_at?->toIso8601String(),
+            ]),
+        ]);
     }
 
     /**
-     * Crear una reseña para un lugar.
-     * POST /api/places/{placeId}/reviews
+     * Crear una review
      */
-    public function store(Request $request, $placeId)
+    public function store(Request $request, Place $place)
     {
-        $request->validate([
+        $validated = $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|min:5|max:1000',
+            'comment' => 'nullable|string|max:1000',
         ]);
 
-        $place = Place::findOrFail($placeId);
-
-        // Verificar si el usuario ya ha reseñado este lugar
-        $existingReview = Review::where('place_id', $place->id)
-            ->where('user_id', $request->user()->id)
+        // Verificar si el usuario ya hizo una review
+        $existingReview = Review::where('user_id', $request->user()->id)
+            ->where('place_id', $place->id)
             ->first();
 
         if ($existingReview) {
             return response()->json([
-                'message' => 'Ya has publicado una reseña para este lugar.'
+                'message' => 'Ya has dejado una reseña para este lugar',
             ], 422);
         }
 
-        // Crear la reseña
         $review = Review::create([
             'user_id' => $request->user()->id,
             'place_id' => $place->id,
-            'rating' => $request->rating,
-            'comment' => $request->comment,
+            'rating' => $validated['rating'],
+            'comment' => $validated['comment'] ?? null,
+            'approved' => true, // Auto-aprobar por ahora
         ]);
 
+        $review->load('user:id,name,avatar');
+
         return response()->json([
-            'message' => 'Reseña publicada correctamente',
-            'review' => $review
+            'message' => 'Reseña creada exitosamente',
+            'data' => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+                'user' => $review->user ? [
+                    'id' => $review->user->id,
+                    'name' => $review->user->name,
+                ] : null,
+                'created_at' => $review->created_at?->toIso8601String(),
+            ],
         ], 201);
     }
 
     /**
-     * Actualizar una reseña.
-     * PUT /api/reviews/{id}
+     * Actualizar review
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Review $review)
     {
-        $review = Review::findOrFail($id);
-
-        // Autorización: Dueño o Admin
-        if ($review->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
+        // Solo el autor puede editar
+        if ($review->user_id !== $request->user()->id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
-        $request->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|min:5|max:500',
+        $validated = $request->validate([
+            'rating' => 'sometimes|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
         ]);
 
-        $review->update([
-            'rating' => $request->rating,
-            'comment' => $request->comment
-        ]);
+        $review->update($validated);
 
-        return response()->json(['message' => 'Reseña actualizada', 'review' => $review]);
+        return response()->json([
+            'message' => 'Reseña actualizada exitosamente',
+            'data' => [
+                'id' => $review->id,
+                'rating' => $review->rating,
+                'comment' => $review->comment,
+            ],
+        ]);
     }
 
     /**
-     * Eliminar una reseña.
-     * DELETE /api/reviews/{id}
+     * Eliminar review
      */
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, Review $review)
     {
-        $review = Review::findOrFail($id);
-
-        // Solo el dueño de la reseña o un admin pueden eliminarla
+        // Solo el autor o admin puede eliminar
         if ($review->user_id !== $request->user()->id && !$request->user()->isAdmin()) {
-            return response()->json([
-                'message' => 'No autorizado para eliminar esta reseña'
-            ], 403);
+            return response()->json(['message' => 'No autorizado'], 403);
         }
 
         $review->delete();
 
         return response()->json([
-            'message' => 'Reseña eliminada correctamente'
+            'message' => 'Reseña eliminada exitosamente',
         ]);
     }
 }

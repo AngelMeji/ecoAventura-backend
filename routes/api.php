@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\FavoriteController;
 
 /* =============================================
    RUTAS PÚBLICAS (sin autenticación)
@@ -25,6 +27,9 @@ Route::get('/categories/{category}', [CategoryController::class, 'show']);
 Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{slug}', [PlaceController::class, 'show']);
 
+// Reviews de un lugar (público)
+Route::get('/places/{place}/reviews', [ReviewController::class, 'index']);
+
 /* =============================================
    RUTAS PROTEGIDAS (requieren autenticación)
    ============================================= */
@@ -35,11 +40,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Perfil del usuario
+    // Perfil del usuario - rutas principales
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile', [ProfileController::class, 'update']); // Alternativa POST
     Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar']);
     Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
+
+    // Rutas alternativas /me/profile (por si el frontend las usa)
+    Route::get('/me/profile', [ProfileController::class, 'show']);
+    Route::put('/me/profile', [ProfileController::class, 'update']);
+    Route::post('/me/profile', [ProfileController::class, 'update']);
+
+    // Reviews (crear, editar, eliminar)
+    Route::post('/places/{place}/reviews', [ReviewController::class, 'store']);
+    Route::put('/reviews/{review}', [ReviewController::class, 'update']);
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy']);
+
+    // Favoritos
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::delete('/favorites/{placeId}', [FavoriteController::class, 'destroy']);
+    Route::get('/favorites/check/{placeId}', [FavoriteController::class, 'check']);
 
     /* ---------- Usuario normal ---------- */
     Route::middleware('role:user,partner,admin')->group(function () {

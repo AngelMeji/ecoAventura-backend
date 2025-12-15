@@ -25,7 +25,6 @@ class AdminController extends Controller
     /**
      * Estadísticas completas para el panel admin
      */
-    // ESTADÍSTICAS REALES
     public function stats()
     {
         // TOP VALORADO
@@ -47,28 +46,26 @@ class AdminController extends Controller
             ->orderByDesc('total')
             ->first();
 
+        // Devolver sin wrapper 'stats' - formato plano que espera el frontend
         return response()->json([
-            'stats' => [
-                'total_users' => User::count(),
-                'total_places' => Place::count(),
-                'pending_places' => Place::where('status', 'pending')->count(),
-                'approved_places' => Place::where('status', 'approved')->count(),
-                'reviews_count' => Review::count(),
-                // Objetos detallados para el Dashboard
-                'top_rated' => $topRated ? [
-                    'name' => $topRated->name,
-                    'rating' => $topRated->reviews_avg_rating,
-                    'count' => $topRated->reviews_count
-                ] : null,
-                'most_popular' => $mostPopular ? [
-                    'name' => $mostPopular->name,
-                    'favorites' => $mostPopular->favorited_by_count
-                ] : null,
-                'top_category' => $topCategory ? [
-                    'name' => $topCategory->name,
-                    'count' => $topCategory->total
-                ] : null
-            ]
+            'total_users' => User::count(),
+            'total_places' => Place::count(),
+            'pending_places' => Place::where('status', 'pending')->count(),
+            'approved_places' => Place::where('status', 'approved')->count(),
+            'reviews_count' => Review::count(),
+            'top_rated' => $topRated ? [
+                'name' => $topRated->name,
+                'rating' => $topRated->reviews_avg_rating,
+                'count' => $topRated->reviews_count
+            ] : null,
+            'most_popular' => $mostPopular ? [
+                'name' => $mostPopular->name,
+                'favorites' => $mostPopular->favorited_by_count
+            ] : null,
+            'top_category' => $topCategory ? [
+                'name' => $topCategory->name,
+                'count' => $topCategory->total
+            ] : null
         ]);
     }
 
