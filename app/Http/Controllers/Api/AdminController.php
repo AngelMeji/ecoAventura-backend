@@ -73,16 +73,85 @@ class AdminController extends Controller
     }
 
     // TABLA: TODOS LOS LUGARES (Para Admin)
-    public function allPlaces()
+    public function allPlaces(Request $request)
     {
-        // Retorna TODO con relaciones necesarias para la tabla visual
-        return Place::with(['user', 'category', 'images'])->latest()->get();
+        $query = Place::with(['user', 'category', 'images']);
+
+        // Filtros opcionales
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $places = $query->latest()->get();
+
+        return response()->json([
+            'data' => $places->map(function ($place) {
+                return [
+                    'id' => $place->id,
+                    'name' => $place->name,
+                    'slug' => $place->slug,
+                    'short_description' => $place->short_description,
+                    'description' => $place->description,
+                    'address' => $place->address,
+                    'latitude' => $place->latitude,
+                    'longitude' => $place->longitude,
+                    'is_featured' => $place->is_featured,
+                    'status' => $place->status,
+                    'category' => $place->category ? [
+                        'id' => $place->category->id,
+                        'name' => $place->category->name,
+                    ] : null,
+                    'user' => $place->user ? [
+                        'id' => $place->user->id,
+                        'name' => $place->user->name,
+                        'email' => $place->user->email,
+                    ] : null,
+                    'images' => $place->images->map(fn ($img) => [
+                        'id' => $img->id,
+                        'url' => $img->url,
+                        'filename' => $img->filename,
+                        'is_primary' => $img->is_primary,
+                        'order' => $img->order,
+                    ])->values(),
+                    'primary_image_url' => $place->primaryImage?->url ?? $place->images->first()?->url,
+                    'created_at' => $place->created_at?->toIso8601String(),
+                    'updated_at' => $place->updated_at?->toIso8601String(),
+                ];
+            }),
+            'total' => $places->count(),
+        ]);
     }
 
     // TABLA: PENDIENTES
     public function pendingPlaces()
     {
-        return Place::where('status', 'pending')->with(['user', 'category'])->get();
+        $places = Place::where('status', 'pending')
+            ->with(['user', 'category', 'images'])
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'data' => $places->map(function ($place) {
+                return [
+                    'id' => $place->id,
+                    'name' => $place->name,
+                    'slug' => $place->slug,
+                    'short_description' => $place->short_description,
+                    'status' => $place->status,
+                    'category' => $place->category ? [
+                        'id' => $place->category->id,
+                        'name' => $place->category->name,
+                    ] : null,
+                    'user' => $place->user ? [
+                        'id' => $place->user->id,
+                        'name' => $place->user->name,
+                    ] : null,
+                    'primary_image_url' => $place->primaryImage?->url ?? $place->images->first()?->url,
+                    'created_at' => $place->created_at?->toIso8601String(),
+                ];
+            }),
+            'total' => $places->count(),
+        ]);
     }
 
     /* =================================
