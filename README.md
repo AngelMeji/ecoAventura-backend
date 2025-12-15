@@ -1,59 +1,342 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🌿 EcoAventura Backend API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST de Laravel para la plataforma EcoAventura - Turismo ecológico y aventura.
 
-## About Laravel
+## 📋 Requisitos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP >= 8.2
+- Composer
+- MySQL / PostgreSQL / SQLite
+- Node.js (opcional, para compilación de assets)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Instalación
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Clonar e instalar dependencias
 
-## Learning Laravel
+```bash
+# Clonar repositorio
+git clone <url-del-repositorio>
+cd ecoAventura-backend
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# Instalar dependencias PHP
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 2. Configurar el entorno
 
-## Laravel Sponsors
+```bash
+# Copiar archivo de configuración
+cp .env.example .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Generar key de la aplicación
+php artisan key:generate
+```
 
-### Premium Partners
+### 3. Configurar la base de datos
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Edita el archivo `.env` con tus credenciales de base de datos:
 
-## Contributing
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ecoaventura
+DB_USERNAME=root
+DB_PASSWORD=
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# URL del frontend (para CORS)
+FRONTEND_URL=http://localhost:3000
+```
 
-## Code of Conduct
+### 4. Ejecutar migraciones y seeders
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# Ejecutar migraciones
+php artisan migrate
 
-## Security Vulnerabilities
+# Ejecutar seeders (usuarios de prueba + categorías)
+php artisan db:seed
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 5. Crear enlace simbólico para storage
 
-## License
+```bash
+php artisan storage:link
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Esto crea un enlace simbólico `public/storage` → `storage/app/public` para servir imágenes.
+
+### 6. Iniciar servidor de desarrollo
+
+```bash
+php artisan serve
+```
+
+El servidor estará disponible en `http://localhost:8000`
+
+---
+
+## 👤 Usuarios de Prueba
+
+| Email | Password | Rol |
+|-------|----------|-----|
+| admin@ecoaventura.com | password | admin |
+| partner@ecoaventura.com | password | partner |
+| user@ecoaventura.com | password | user |
+
+---
+
+## 📡 Endpoints de la API
+
+### Autenticación
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/register` | Registrar usuario | No |
+| POST | `/api/login` | Iniciar sesión | No |
+| GET | `/api/me` | Usuario autenticado | Sí |
+| POST | `/api/logout` | Cerrar sesión | Sí |
+
+### Categorías (Público)
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/categories` | Listar categorías | No |
+| GET | `/api/categories/{id}` | Ver categoría | No |
+
+### Lugares (Público)
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/places` | Listar lugares aprobados | No |
+| GET | `/api/places/{slug}` | Ver lugar por slug | No |
+
+#### Parámetros de query para `/api/places`:
+
+- `category_id`: Filtrar por categoría
+- `featured`: `true` para lugares destacados
+- `search`: Buscar por nombre, descripción o dirección
+- `per_page`: Cantidad por página (default: 12)
+
+### Lugares - Partner/Admin
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/partner/places` | Mis lugares | Partner |
+| POST | `/api/partner/places` | Crear lugar | Partner |
+| PUT | `/api/partner/places/{id}` | Actualizar lugar | Partner |
+| DELETE | `/api/partner/places/{id}` | Eliminar lugar | Partner |
+
+### Lugares - Admin
+
+| Método | Endpoint | Descripción | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/admin/places` | Todos los lugares | Admin |
+| PATCH | `/api/admin/places/{id}/status` | Cambiar estado | Admin |
+| PUT | `/api/admin/places/{id}` | Actualizar lugar | Admin |
+| DELETE | `/api/admin/places/{id}` | Eliminar lugar | Admin |
+
+---
+
+## 📤 Subida de Imágenes
+
+### Crear lugar con imágenes
+
+```bash
+POST /api/partner/places
+Content-Type: multipart/form-data
+Authorization: Bearer {token}
+
+# Campos:
+- category_id: integer (required)
+- name: string (required)
+- short_description: string (required)
+- description: string (optional)
+- address: string (optional)
+- latitude: float (optional)
+- longitude: float (optional)
+- images[]: file (required, min:1, max:10)
+- primary_image_index: integer (optional, default:0)
+```
+
+### Actualizar lugar e imágenes
+
+```bash
+PUT /api/partner/places/{id}
+Content-Type: multipart/form-data
+Authorization: Bearer {token}
+
+# Campos:
+- name: string (optional)
+- short_description: string (optional)
+- ...otros campos
+- new_images[]: file (optional, max:10)
+- delete_images[]: integer[] (IDs de imágenes a eliminar)
+- primary_image_id: integer (ID de nueva imagen principal)
+```
+
+---
+
+## 📊 Respuesta de Lugar
+
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Cascada El Salto",
+    "slug": "cascada-el-salto",
+    "short_description": "Hermosa cascada de 30 metros",
+    "description": "...",
+    "address": "Montaña Verde, km 45",
+    "latitude": "10.1234567",
+    "longitude": "-64.1234567",
+    "is_featured": false,
+    "status": "approved",
+    "category": {
+      "id": 4,
+      "name": "Cascadas"
+    },
+    "user": {
+      "id": 2,
+      "name": "Socio Demo"
+    },
+    "images": [
+      {
+        "id": 1,
+        "url": "http://localhost:8000/storage/places/1/abc123.jpg",
+        "filename": "cascada.jpg",
+        "is_primary": true,
+        "order": 0
+      },
+      {
+        "id": 2,
+        "url": "http://localhost:8000/storage/places/1/def456.jpg",
+        "filename": "vista.jpg",
+        "is_primary": false,
+        "order": 1
+      }
+    ],
+    "primary_image_url": "http://localhost:8000/storage/places/1/abc123.jpg",
+    "created_at": "2025-12-15T10:00:00+00:00",
+    "updated_at": "2025-12-15T10:00:00+00:00"
+  }
+}
+```
+
+---
+
+## 🔐 Autenticación
+
+Esta API usa **Laravel Sanctum** para autenticación basada en tokens.
+
+### Obtener token (Login)
+
+```bash
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "partner@ecoaventura.com",
+  "password": "password"
+}
+```
+
+Respuesta:
+```json
+{
+  "message": "Login exitoso",
+  "user": {...},
+  "token": "1|abc123def456..."
+}
+```
+
+### Usar token en peticiones
+
+```bash
+GET /api/partner/places
+Authorization: Bearer 1|abc123def456...
+```
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   └── Api/
+│   │       ├── AuthController.php      # Autenticación
+│   │       ├── CategoryController.php  # Categorías
+│   │       ├── PlaceController.php     # Lugares + imágenes
+│   │       ├── AdminController.php     # Dashboard admin
+│   │       ├── PartnerController.php   # Dashboard partner
+│   │       └── UserController.php      # Dashboard user
+│   └── Middleware/
+│       └── RoleMiddleware.php          # Verificación de roles
+├── Models/
+│   ├── User.php
+│   ├── Place.php
+│   ├── PlaceImage.php
+│   ├── Category.php
+│   ├── Review.php
+│   └── Favorite.php
+database/
+├── migrations/
+│   ├── *_create_places_table.php
+│   ├── *_create_place_images_table.php
+│   └── ...
+└── seeders/
+    ├── DatabaseSeeder.php
+    └── CategorySeeder.php
+routes/
+└── api.php                              # Rutas de la API
+config/
+└── cors.php                             # Configuración CORS
+```
+
+---
+
+## 🛠️ Comandos Útiles
+
+```bash
+# Limpiar caché
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+
+# Ver rutas de la API
+php artisan route:list --path=api
+
+# Crear nuevo lugar desde tinker
+php artisan tinker
+>>> $place = App\Models\Place::create([...])
+
+# Regenerar enlace de storage
+php artisan storage:link
+```
+
+---
+
+## 📝 Notas Importantes
+
+1. **CORS**: La configuración permite peticiones desde `localhost:3000` y `localhost:5173`. Ajusta en `config/cors.php` según tu frontend.
+
+2. **Imágenes**: Se almacenan en `storage/app/public/places/{place_id}/` y se sirven vía `/storage/places/{place_id}/{filename}`
+
+3. **Estados de lugares**:
+   - `pending`: Pendiente de aprobación
+   - `approved`: Aprobado y visible
+   - `rejected`: Rechazado
+   - `needs_fix`: Necesita correcciones
+
+4. **Roles**:
+   - `user`: Usuario normal (puede ver lugares, favoritos, reviews)
+   - `partner`: Socio (puede crear/editar sus lugares)
+   - `admin`: Administrador (acceso total)
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
