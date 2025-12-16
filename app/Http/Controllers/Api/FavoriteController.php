@@ -9,11 +9,22 @@ class FavoriteController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user()
+        $favorites = $request->user()
             ->favorites()
-            ->with('place.category')
+            ->with(['place.category', 'place.images'])
             ->latest()
             ->get();
+
+        // Transformamos para devolver directamente los lugares (Places)
+        // Esto permite reutilizar el mismo componente frontend que usa /places
+        $places = $favorites->map(function ($fav) {
+            $place = $fav->place;
+            // Forzamos el atributo is_favorite a true ya que estamos en la lista de favoritos
+            $place->setAttribute('is_favorite', true);
+            return $place;
+        });
+
+        return response()->json($places);
     }
 
     public function store(Request $request)

@@ -31,6 +31,7 @@ class PartnerController extends Controller
 
             // Mis lugares mejor valorados
             'top_places' => $user->places()
+                ->with('images')
                 ->where('status', 'approved')
                 ->orderByDesc('average_rating')
                 ->take(5)

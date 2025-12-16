@@ -15,7 +15,13 @@ class PlaceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Place::with(['category', 'user', 'favorites', 'reviews'])
+        $query = Place::with(['category', 'user', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->withExists([
+                'favorites as is_favorite' => function ($q) {
+                    $q->where('user_id', auth('sanctum')->id());
+                }
+            ])
             ->where('status', 'approved');
 
         // Filtrar por categoría (?category=cascadas)
@@ -44,7 +50,13 @@ class PlaceController extends Controller
      */
     public function show($identifier)
     {
-        $query = Place::with(['category', 'user', 'reviews.user', 'favorites']);
+        $query = Place::with(['category', 'user', 'reviews.user', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->withExists([
+                'favorites as is_favorite' => function ($q) {
+                    $q->where('user_id', auth('sanctum')->id());
+                }
+            ]);
 
         // Si es ID
         if (is_numeric($identifier)) {

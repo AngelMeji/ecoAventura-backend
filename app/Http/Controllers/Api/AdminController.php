@@ -71,7 +71,7 @@ class AdminController extends Controller
     // TABLA: PENDIENTES
     public function pendingPlaces()
     {
-        return Place::where('status', 'pending')->with(['user', 'category'])->get();
+        return Place::where('status', 'pending')->with(['user', 'category', 'images'])->get();
     }
 
     /* =================================
