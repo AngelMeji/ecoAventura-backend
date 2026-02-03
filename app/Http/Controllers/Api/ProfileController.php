@@ -43,7 +43,11 @@ class ProfileController extends Controller
     {
         $request->validate([
             'current_password' => 'required|current_password',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.current_password' => 'La contraseña actual no es correcta.',
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $request->user()->update([
@@ -51,7 +55,8 @@ class ProfileController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Contraseña actualizada correctamente',
+            'status' => 'success',
+            'message' => '¡Éxito! Tu contraseña ha sido actualizada correctamente.',
         ]);
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "430adb5ffb9cc6ad5d7fcf0edaf3a5fb",
+    "content-hash": "b0514a1acb03d00d1559cd844eba6bb2",
     "packages": [
         {
             "name": "brick/math",
@@ -6051,6 +6051,77 @@
                 }
             ],
             "time": "2024-11-21T01:49:47+00:00"
+        },
+        {
+            "name": "waad/laravel-profanity-filter",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/waadmawlood/laravel-profanity-filter.git",
+                "reference": "c581a7933c77289c848c0626bdae2368c9578aae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/waadmawlood/laravel-profanity-filter/zipball/c581a7933c77289c848c0626bdae2368c9578aae",
+                "reference": "c581a7933c77289c848c0626bdae2368c9578aae",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.0",
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^9.0|^10.0|^11.0|^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Waad\\ProfanityFilter\\ProfanityFilterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Waad\\ProfanityFilter\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Waad Mawlood",
+                    "email": "waad_mawlood@outlook.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel Profanity Filter - Powerful PHP package for detecting, filtering, and masking profanity in multiple languages. Supports leet speak, custom word lists, case sensitivity, and seamless Laravel integration.",
+            "homepage": "https://github.com/waad/laravel-profanity-filter",
+            "keywords": [
+                "Masking",
+                "Profanity Filter",
+                "bad words",
+                "content moderation",
+                "custom words",
+                "language filter",
+                "laravel",
+                "laravel package",
+                "leet speak",
+                "php",
+                "profanity",
+                "profanity detection",
+                "swear words",
+                "text filter"
+            ],
+            "support": {
+                "issues": "https://github.com/waad/laravel-profanity-filter/issues",
+                "source": "https://github.com/waad/laravel-profanity-filter"
+            },
+            "time": "2025-11-05T15:40:24+00:00"
         }
     ],
     "packages-dev": [

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\Place;
 use Illuminate\Support\Facades\DB;
+use Waad\ProfanityFilter\Facades\ProfanityFilter;
 
 class ReviewController extends Controller
 {
@@ -37,7 +38,17 @@ class ReviewController extends Controller
     {
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|min:5|max:1000',
+            'comment' => [
+                'required', 
+                'string', 
+                'min:5', 
+                'max:1000',
+                function ($attribute, $value, $fail) {
+                    if (ProfanityFilter::hasProfanity($value)) {
+                        $fail('El comentario contiene palabras ofensivas.');
+                    }
+                }
+            ],
         ]);
 
         $place = Place::findOrFail($placeId);
@@ -82,7 +93,17 @@ class ReviewController extends Controller
 
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|string|min:5|max:500',
+            'comment' => [
+                'required', 
+                'string', 
+                'min:5', 
+                'max:500',
+                function ($attribute, $value, $fail) {
+                    if (ProfanityFilter::hasProfanity($value)) {
+                        $fail('El comentario contiene palabras ofensivas.');
+                    }
+                }
+            ],
         ]);
 
         $review->update([
