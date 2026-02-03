@@ -10,12 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('place_images', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('place_id')->constrained()->onDelete('cascade');
-            $table->string('image_path');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('place_images')) {
+            Schema::create('place_images', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('place_id')->constrained()->onDelete('cascade');
+                $table->string('image_path');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

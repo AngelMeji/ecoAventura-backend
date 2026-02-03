@@ -11,9 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('places', function (Blueprint $table) {
-            $table->enum('difficulty', ['baja', 'media', 'alta', 'experto'])->nullable();
-            $table->string('duration')->nullable(); // Ej: "3 horas", "2 días"
-            $table->string('best_season')->nullable(); // Ej: "Verano", "Todo el año"
+            if (!Schema::hasColumn('places', 'difficulty')) {
+                $table->enum('difficulty', ['baja', 'media', 'alta', 'experto'])->nullable();
+            }
+            if (!Schema::hasColumn('places', 'duration')) {
+                $table->string('duration')->nullable();
+            }
+            if (!Schema::hasColumn('places', 'best_season')) {
+                $table->string('best_season')->nullable();
+            }
         });
     }
 

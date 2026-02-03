@@ -36,7 +36,7 @@ class CategoryController extends Controller
                 'slug' => $category->slug,
                 'count' => $category->places_count, // El frontend debe leer esto
                 'avgRating' => 4.5, // Valor temporal para evitar errores hasta que arregles la relación
-                'icon' => $icons[$category->slug] ?? '🗺️'
+                'icon' => $icons[$category->slug] ?? null
             ];
         });
     }

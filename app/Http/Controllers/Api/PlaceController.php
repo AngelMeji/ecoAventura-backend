@@ -189,22 +189,7 @@ class PlaceController extends Controller
             'difficulty' => 'sometimes|required|in:baja,media,alta,experto',
             'duration' => 'sometimes|required|string|max:255',
             'best_season' => 'sometimes|required|string|max:255',
-        ], [
-            'name.required' => 'El nombre del lugar es obligatorio',
-            'category_id.required' => 'Debes seleccionar una categoría',
-            'category_id.exists' => 'La categoría seleccionada no existe',
-            'short_description.required' => 'La descripción corta es obligatoria',
-            'description.required' => 'La descripción completa es obligatoria',
-            'description.min' => 'La descripción debe tener al menos 50 caracteres',
-            'address.required' => 'La dirección es obligatoria',
-            'latitude.required' => 'La latitud es obligatoria',
-            'latitude.between' => 'La latitud debe estar entre -90 y 90',
-            'longitude.required' => 'La longitud es obligatoria',
-            'longitude.between' => 'La longitud debe estar entre -180 y 180',
-            'difficulty.required' => 'La dificultad es obligatoria',
-            'difficulty.in' => 'La dificultad debe ser: baja, media, alta o experto',
-            'duration.required' => 'La duración es obligatoria',
-            'best_season.required' => 'La mejor temporada es obligatoria',
+            'status' => 'sometimes|in:pending,approved,rejected,needs_fix',
         ]);
 
         /* Si cambia el nombre, cambia el slug */
@@ -212,7 +197,7 @@ class PlaceController extends Controller
             $place->slug = Str::slug($request->name) . '-' . uniqid();
         }
 
-        $place->update($request->only([
+        $data = $request->only([
             'name',
             'category_id',
             'short_description',
@@ -224,7 +209,14 @@ class PlaceController extends Controller
             'difficulty',
             'duration',
             'best_season',
-        ]));
+        ]);
+
+        // Solo admin puede cambiar status directamente en update
+        if ($request->user()->isAdmin() && $request->has('status')) {
+            $data['status'] = $request->status;
+        }
+
+        $place->update($data);
 
         return response()->json([
             'message' => 'Lugar actualizado correctamente',
@@ -269,8 +261,12 @@ class PlaceController extends Controller
     /**
      * APROBAR LUGAR (admin)
      */
-    public function approve(int $id)
+    public function approve(Request $request, int $id)
     {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $place = Place::findOrFail($id);
         $place->update(['status' => 'approved']);
 
@@ -282,8 +278,12 @@ class PlaceController extends Controller
     /**
      * RECHAZAR LUGAR (admin)
      */
-    public function reject(int $id)
+    public function reject(Request $request, int $id)
     {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $place = Place::findOrFail($id);
         $place->update(['status' => 'rejected']);
 
@@ -295,8 +295,12 @@ class PlaceController extends Controller
     /**
      * PEDIR CORRECCIÓN (admin)
      */
-    public function needsFix(int $id)
+    public function needsFix(Request $request, int $id)
     {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
         $place = Place::findOrFail($id);
         $place->update(['status' => 'needs_fix']);
 

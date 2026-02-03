@@ -74,22 +74,31 @@ class Place extends Model
     /* Indica si el lugar es favorito del usuario autenticado */
     public function getIsFavoriteAttribute(): bool
     {
-        // Optimización: si se usó withExists('favorites')
-        if (array_key_exists('favorites_exists', $this->attributes)) {
-            return $this->attributes['favorites_exists'];
+        // 1. Si viene del query con alias (PlaceController)
+        if (array_key_exists('is_favorite', $this->attributes)) {
+            return (bool) $this->attributes['is_favorite'];
         }
 
-        if (!auth()->check()) {
+        // 2. Si viene del query standard (withExists)
+        if (array_key_exists('favorites_exists', $this->attributes)) {
+            return (bool) $this->attributes['favorites_exists'];
+        }
+
+        // 3. Fallback: verificar autenticación (soporte Sanctum y Web)
+        $user = auth('sanctum')->user() ?? auth()->user();
+
+        if (!$user) {
             return false;
         }
 
-        // Optimización: si la relación ya está cargada
+        // 4. Si la relación ya está cargada
         if ($this->relationLoaded('favorites')) {
-            return $this->favorites->contains('user_id', auth()->id());
+            return $this->favorites->contains('user_id', $user->id);
         }
 
+        // 5. Consulta directa
         return $this->favorites()
-            ->where('user_id', auth()->id())
+            ->where('user_id', $user->id)
             ->exists();
     }
 
