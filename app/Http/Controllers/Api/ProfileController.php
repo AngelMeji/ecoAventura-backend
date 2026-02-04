@@ -71,7 +71,8 @@ class ProfileController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => '¡Éxito! Tu contraseña ha sido actualizada correctamente.',
+            'message' => 'Cambio de contraseña exitoso. Por favor, ingrese nuevamente para iniciar sesión con sus nuevas credenciales.',
+            'logout' => true
         ]);
     }
 }

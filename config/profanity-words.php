@@ -148,6 +148,7 @@ return [
         'hostia', 'chingar', 'pinche', 'culero', 'maricon', 'zorra', 'capullo', 'pelotudo', 'concha', 'mamaguevo',
         'gonorrea', 'malparido', 'hijo de puta', 'me cago en', 'follar', 'chupar', 'polla', 'nabo', 'picha',
         'cagar', 'tonto', 'imbecil', 'subnormal', 'tarado', 'retrasado', 'bastardo', 'puto', 'zorron', 'guarra',
-        'puton', 'follanda', 'follada', 'follado', 'follar', 'follas', 'follen', 'follen', 'mamon',
+        'puton', 'follanda', 'follada', 'follado', 'follar', 'follas', 'follen', 'follen', 'mamon', 'chimbo', 'carechimba',
+        'triple', 'suicidio', 'suicidios', 'suicidar', 'suicida', 'ahuevado', 'ahuevados', 'ostia', 'ostias'
     ],
 ];
