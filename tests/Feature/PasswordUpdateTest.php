@@ -72,8 +72,8 @@ class PasswordUpdateTest extends TestCase
 
         $response = $this->actingAs($user)->putJson('/api/me/password', [
             'current_password' => 'password123',
-            'password' => '123',
-            'password_confirmation' => '123',
+            'password' => '12345',
+            'password_confirmation' => '12345',
         ]);
 
         $response->assertStatus(422)

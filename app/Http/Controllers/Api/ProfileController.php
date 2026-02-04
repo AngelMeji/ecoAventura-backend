@@ -42,17 +42,32 @@ class ProfileController extends Controller
     public function updatePassword(Request $request)
     {
         $request->validate([
-            'current_password' => 'required|current_password',
-            'password' => 'required|string|min:8|confirmed',
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
         ], [
-            'current_password.current_password' => 'La contraseña actual no es correcta.',
-            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.min' => 'La nueva contraseña debe tener al menos 6 caracteres.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
-        $request->user()->update([
+        $user = $request->user();
+
+        // Verificar manualmente la contraseña actual
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'La contraseña actual no es correcta.',
+                'errors' => [
+                    'current_password' => ['La contraseña actual no es correcta.']
+                ]
+            ], 422);
+        }
+
+        // Actualizar contraseña
+        $user->update([
             'password' => Hash::make($request->password),
         ]);
+
+        // Revocar todos los tokens existentes por seguridad
+        $user->tokens()->delete();
 
         return response()->json([
             'status' => 'success',
