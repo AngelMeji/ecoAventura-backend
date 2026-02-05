@@ -57,6 +57,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
     Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']); // Mapped to destroyUser
 
+    // ADMIN REVIEW MANAGEMENT (Moderación de comentarios)
+    Route::get('/admin/reviews', [AdminController::class, 'indexReviews']);
+    Route::patch('/admin/reviews/{id}/toggle-hide', [AdminController::class, 'toggleHideReview']);
+
     // PARTNER & USER DASHBOARDS
     Route::get('/partner/dashboard', [PartnerController::class, 'dashboard']);
     Route::get('/user/dashboard', [UserController::class, 'dashboard']);

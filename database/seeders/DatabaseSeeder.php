@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         // 1. Crear usuario ADMIN
         User::factory()->create([
             'name' => 'Administrador',
-            'email' => 'admin@example.com',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
         ]);
@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         // 2. Crear usuario PARTNER (Socio)
         User::factory()->create([
             'name' => 'Socio EcoAventura',
-            'email' => 'partner@example.com',
+            'email' => 'partner@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'partner',
         ]);
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         // 3. Crear usuario USER (Normal)
         User::factory()->create([
             'name' => 'Usuario Test',
-            'email' => 'user@example.com',
+            'email' => 'user@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'user',
         ]);

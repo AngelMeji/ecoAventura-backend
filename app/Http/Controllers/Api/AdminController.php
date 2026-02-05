@@ -147,4 +147,43 @@ class AdminController extends Controller
             'message' => 'Usuario eliminado correctamente'
         ]);
     }
+
+    /* =================================
+       GESTIÓN DE RESEÑAS (Moderación)
+       ================================= */
+
+    /**
+     * Listar todas las reseñas (para moderación)
+     */
+    public function indexReviews()
+    {
+        $reviews = Review::with(['user:id,name,email', 'place:id,name,slug'])
+            ->latest()
+            ->get()
+            ->map(function ($review) {
+                $review->raw_comment = $review->getRawOriginal('comment');
+                return $review;
+            });
+
+        return response()->json($reviews);
+    }
+
+    /**
+     * Ocultar/Mostrar el comentario de una reseña (toggle)
+     * Mantiene la calificación (rating) visible.
+     */
+    public function toggleHideReview($id)
+    {
+        $review = Review::findOrFail($id);
+
+        $review->is_hidden = !$review->is_hidden;
+        $review->save();
+
+        return response()->json([
+            'message' => $review->is_hidden
+                ? 'Comentario ocultado correctamente'
+                : 'Comentario restaurado correctamente',
+            'review' => array_merge($review->toArray(), ['raw_comment' => $review->getRawOriginal('comment')])
+        ]);
+    }
 }

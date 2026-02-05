@@ -12,7 +12,8 @@ class Review extends Model
         'place_id',
         'rating',
         'comment',
-        'approved'
+        'approved',
+        'is_hidden'
     ];
 
     public function user(): BelongsTo
@@ -23,5 +24,20 @@ class Review extends Model
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class);
+    }
+
+    /**
+     * Accessor para ocultar el comentario si está baneado por moderación.
+     * Permite que la calificación (estrellas) siga siendo pública pero protege el texto.
+     */
+    protected function getCommentAttribute($value)
+    {
+        if ($this->is_hidden) {
+            // Si el usuario es admin, quizás quiera ver el comentario original en el panel de admin.
+            // Pero para las rutas públicas / listados normales, lo ocultamos.
+            // Para simplicidad en este paso, lo ocultamos para todos excepto si explícitamente se maneja en el controlador de admin.
+            return "Este comentario ha sido ocultado por moderación.";
+        }
+        return $value;
     }
 }
