@@ -41,6 +41,12 @@ class PlaceController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
+        // Filipar por ID de Usuario (?user_id=5)
+        // Útil para el dashboard de socios
+        if ($request->filled('user_id')) {
+            $query->where('user_id', $request->user_id);
+        }
+
         return response()->json($query->latest()->paginate(10));
     }
 
@@ -167,13 +173,13 @@ class PlaceController extends Controller
     {
         $place = Place::findOrFail($id);
 
-        // Autorización manual (por ahora)
+        // Autorización manual
         if (
             !$request->user()->isAdmin() &&
-            $place->user_id !== $request->user()->id
+            (int) $place->user_id !== (int) $request->user()->id
         ) {
             return response()->json([
-                'message' => 'No autorizado'
+                'message' => 'No autorizado para editar este lugar'
             ], 403);
         }
 

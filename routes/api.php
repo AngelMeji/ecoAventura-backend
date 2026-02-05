@@ -43,23 +43,30 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/reviews/{id}', [ReviewController::class, 'update']);
     Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 
-    // ADMIN DASHBOARD & MANAGEMENT
-    Route::get('/admin/dashboard', [AdminController::class, 'stats']);
-    Route::get('/admin/places/pending', [AdminController::class, 'pendingPlaces']);
-    Route::get('/admin/places', [AdminController::class, 'allPlaces']); // Nueva ruta para ver todos
+    // ADMIN DASHBOARD & MANAGEMENT (Solo Admin)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'stats']);
+        Route::get('/admin/places/pending', [AdminController::class, 'pendingPlaces']);
+        Route::get('/admin/places', [AdminController::class, 'allPlaces']);
 
-    // User Profile (Exact match as requested)
+        // ADMIN USER MANAGEMENT
+        Route::get('/admin/users', [AdminController::class, 'indexUsers']);
+        Route::post('/admin/users', [AdminController::class, 'createUser']);
+        Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
+        Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']);
+
+        // ADMIN REVIEW MANAGEMENT (Moderación de comentarios)
+        Route::get('/admin/reviews', [AdminController::class, 'indexReviews']);
+        Route::patch('/admin/reviews/{id}/toggle-hide', [AdminController::class, 'toggleHideReview']);
+
+        // CATEGORIES (Admin management) - Movidas aquí para mayor seguridad
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::put('/categories/{id}', [CategoryController::class, 'update']);
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+    });
+
+    // User Profile
     Route::match(['put', 'post'], '/me/profile', [ProfileController::class, 'update']);
-
-    // ADMIN USER MANAGEMENT
-    Route::get('/admin/users', [AdminController::class, 'indexUsers']);
-    Route::post('/admin/users', [AdminController::class, 'createUser']);
-    Route::put('/admin/users/{id}', [AdminController::class, 'updateUser']);
-    Route::delete('/admin/users/{id}', [AdminController::class, 'destroyUser']); // Mapped to destroyUser
-
-    // ADMIN REVIEW MANAGEMENT (Moderación de comentarios)
-    Route::get('/admin/reviews', [AdminController::class, 'indexReviews']);
-    Route::patch('/admin/reviews/{id}/toggle-hide', [AdminController::class, 'toggleHideReview']);
 
     // PARTNER & USER DASHBOARDS
     Route::get('/partner/dashboard', [PartnerController::class, 'dashboard']);
@@ -69,9 +76,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{placeId}', [FavoriteController::class, 'destroy']);
-
-    // CATEGORIES (Admin management)
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::put('/categories/{id}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 });
