@@ -103,12 +103,20 @@ class Place extends Model
     }
 
     /* Promedio de calificación del lugar */
+    /* Promedio de calificación del lugar */
     public function getAverageRatingAttribute(): float
     {
+        // 1. Si viene del query con withAvg (PlaceController / AdminController)
+        if (array_key_exists('reviews_avg_rating', $this->attributes)) {
+            return round((float) $this->attributes['reviews_avg_rating'], 1);
+        }
+
+        // 2. Si la relación ya está cargada
         if ($this->relationLoaded('reviews')) {
             return round($this->reviews->avg('rating'), 1);
         }
 
+        // 3. Fallback: consulta directa (evitar si es posible)
         return round($this->reviews()->avg('rating') ?? 0, 1);
     }
 }

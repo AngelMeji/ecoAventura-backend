@@ -64,14 +64,21 @@ class AdminController extends Controller
     // TABLA: TODOS LOS LUGARES (Para Admin)
     public function allPlaces()
     {
-        // Retorna TODO con relaciones necesarias para la tabla visual
-        return Place::with(['user', 'category', 'images'])->latest()->get();
+        // Retorna TODO con relaciones necesarias + Pagina
+        // Incluimos withAvg para evitar N+1 del atributo average_rating
+        return Place::with(['user', 'category', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(15);
     }
 
     // TABLA: PENDIENTES
     public function pendingPlaces()
     {
-        return Place::where('status', 'pending')->with(['user', 'category', 'images'])->get();
+        return Place::where('status', 'pending')
+            ->with(['user', 'category', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->paginate(15);
     }
 
     /* =================================
@@ -80,7 +87,7 @@ class AdminController extends Controller
 
     public function indexUsers()
     {
-        return response()->json(User::all());
+        return response()->json(User::latest()->paginate(15));
     }
 
     public function createUser(Request $request)
@@ -88,7 +95,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|confirmed',
             'role' => 'required|in:admin,partner,user',
         ]);
 
@@ -159,11 +166,13 @@ class AdminController extends Controller
     {
         $reviews = Review::with(['user:id,name,email', 'place:id,name,slug'])
             ->latest()
-            ->get()
-            ->map(function ($review) {
-                $review->raw_comment = $review->getRawOriginal('comment');
-                return $review;
-            });
+            ->paginate(15);
+
+        // Transform the paginated collection items to include raw_comment
+        $reviews->getCollection()->transform(function ($review) {
+            $review->raw_comment = $review->getRawOriginal('comment');
+            return $review;
+        });
 
         return response()->json($reviews);
     }
