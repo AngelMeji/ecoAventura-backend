@@ -11,18 +11,25 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            'Cascadas',
+            'Avistamiento de aves',
             'Senderismo',
+            'Paisaje cultural cafetero',
+            'Termales',
+            'Nevados y montañas',
+            'Cascadas',
+            'Glamping',
+            'Parques temáticos',
+            'Rios y lagos',
             'Miradores',
-            'Parques Naturales',
-            'Turismo Rural',
+            'Turismo rural',
+            'Aventura',
         ];
 
         foreach ($categories as $name) {
-            Category::create([
-                'name' => $name,
-                'slug' => Str::slug($name),
-            ]);
+            Category::firstOrCreate(
+                ['slug' => Str::slug($name)],
+                ['name' => $name]
+            );
         }
     }
 }
