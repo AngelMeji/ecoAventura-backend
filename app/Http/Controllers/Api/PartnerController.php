@@ -42,6 +42,11 @@ class PartnerController extends Controller
             'message' => 'Dashboard de socio',
             'user' => $user,
             'stats' => $stats,
+            'places' => Place::with(['category', 'user', 'images'])
+                ->withAvg('reviews', 'rating')
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get()
         ]);
     }
 }

@@ -33,6 +33,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('places', PlaceController::class)->except(['index', 'show']); // Index/Show are public
 
     // Approval Workflow
+    Route::patch('/places/{id}/set-pending', [PlaceController::class, 'setPending']);
     Route::patch('/places/{id}/approve', [PlaceController::class, 'approve']);
     Route::patch('/places/{id}/reject', [PlaceController::class, 'reject']);
     Route::patch('/places/{id}/needs-fix', [PlaceController::class, 'needsFix']); // Added back as it was useful

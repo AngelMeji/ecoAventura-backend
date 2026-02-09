@@ -21,8 +21,15 @@ class PlaceController extends Controller
                 'favorites as is_favorite' => function ($q) {
                     $q->where('user_id', auth('sanctum')->id());
                 }
-            ])
-            ->where('status', 'approved');
+            ]);
+
+        // Si es Admin o el Dueño consultando sus propios lugares, no filtramos por 'approved'
+        $user = auth('sanctum')->user();
+        $isFilteringBySelf = $request->filled('user_id') && $user && (int) $request->user_id === (int) $user->id;
+
+        if (!$isFilteringBySelf && (!$user || !$user->isAdmin())) {
+            $query->where('status', 'approved');
+        }
 
         // Filtrar por categoría (?category=cascadas)
         if ($request->filled('category')) {
@@ -312,6 +319,23 @@ class PlaceController extends Controller
 
         return response()->json([
             'message' => 'Lugar marcado para corrección'
+        ]);
+    }
+
+    /**
+     * MARCAR COMO PENDIENTE (admin)
+     */
+    public function setPending(Request $request, int $id)
+    {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        $place = Place::findOrFail($id);
+        $place->update(['status' => 'pending']);
+
+        return response()->json([
+            'message' => 'Lugar marcado como pendiente'
         ]);
     }
 }
