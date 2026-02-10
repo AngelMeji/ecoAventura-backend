@@ -227,6 +227,9 @@ class PlaceController extends Controller
         // Solo admin puede cambiar status directamente en update
         if ($request->user()->isAdmin() && $request->has('status')) {
             $data['status'] = $request->status;
+        } elseif (!$request->user()->isAdmin()) {
+            // Si es socio, al editar vuelve a pendiente para revisión
+            $data['status'] = 'pending';
         }
 
         $place->update($data);
@@ -327,11 +330,13 @@ class PlaceController extends Controller
      */
     public function setPending(Request $request, int $id)
     {
-        if (!$request->user()->isAdmin()) {
+        $place = Place::findOrFail($id);
+
+        // Permitir si es Admin O si es el dueño del lugar
+        if (!$request->user()->isAdmin() && (int) $request->user()->id !== (int) $place->user_id) {
             return response()->json(['message' => 'No autorizado'], 403);
         }
 
-        $place = Place::findOrFail($id);
         $place->update(['status' => 'pending']);
 
         return response()->json([
