@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\ReviewController; // Ensure this is imported
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PasswordResetController;
+use App\Http\Controllers\Api\ChatbotController;
 
 /* ---------- AUTH (Public) ---------- */
 Route::post('/register', [AuthController::class, 'register']);
@@ -25,6 +26,7 @@ Route::get('/categories', [CategoryController::class, 'index']);
 // Place List (Public)
 Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{id}', [PlaceController::class, 'show']);
+Route::post('/places/{id}/chat', [ChatbotController::class, 'chat']);
 
 /* ---------- PROTECTED ROUTES ---------- */
 Route::middleware(['auth:sanctum'])->group(function () {
