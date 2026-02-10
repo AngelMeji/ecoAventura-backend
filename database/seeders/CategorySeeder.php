@@ -21,8 +21,6 @@ class CategorySeeder extends Seeder
             'Parques temáticos',
             'Rios y lagos',
             'Miradores',
-            'Turismo rural',
-            'Aventura',
         ];
 
         foreach ($categories as $name) {

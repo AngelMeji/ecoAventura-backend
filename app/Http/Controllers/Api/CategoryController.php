@@ -20,7 +20,6 @@ class CategoryController extends Controller
             'playa' => '🏖️',
             'familia' => '👨‍👩‍👧‍👦',
             'pareja' => '💑',
-            'aventura' => '🧗',
             'gastronomia' => '🍽️',
             'cultura' => '🏛️',
             'relax' => '🧘',

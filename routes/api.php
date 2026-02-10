@@ -10,10 +10,15 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\ReviewController; // Ensure this is imported
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\PasswordResetController;
 
 /* ---------- AUTH (Public) ---------- */
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+/* ---------- PASSWORD RESET (Public) ---------- */
+Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
+Route::post('/password/reset', [PasswordResetController::class, 'reset']);
 
 /* ---------- CATEGORÍAS (Public) ---------- */
 Route::get('/categories', [CategoryController::class, 'index']);
