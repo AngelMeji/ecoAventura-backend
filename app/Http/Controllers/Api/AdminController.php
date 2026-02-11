@@ -141,10 +141,15 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Evitar auto-eliminación
         if ($user->id === auth()->id()) {
             return response()->json([
                 'message' => 'No puedes eliminar tu propia cuenta'
+            ], 403);
+        }
+
+        if ($user->isAdmin()) {
+            return response()->json([
+                'message' => 'No se puede eliminar una cuenta con rol de administrador.'
             ], 403);
         }
 

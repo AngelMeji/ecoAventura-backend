@@ -106,8 +106,8 @@ class PlaceController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'short_description' => 'required|string|max:255',
-            'description' => 'required|string|min:50', // Descripción completa requerida, mínimo 50 caracteres
+            'short_description' => 'required|string|max:1000',
+            'description' => 'required|string|min:50|max:5000', // Descripción completa requerida, mínimo 50 caracteres
             'address' => 'required|string|max:255',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
@@ -193,8 +193,8 @@ class PlaceController extends Controller
         $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'category_id' => 'sometimes|required|exists:categories,id',
-            'short_description' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string|min:50',
+            'short_description' => 'sometimes|required|string|max:1000',
+            'description' => 'sometimes|required|string|min:50|max:5000',
             'address' => 'sometimes|required|string|max:255',
             'latitude' => 'sometimes|required|numeric|between:-90,90',
             'longitude' => 'sometimes|required|numeric|between:-180,180',
