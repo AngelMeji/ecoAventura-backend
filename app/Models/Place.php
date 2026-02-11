@@ -66,7 +66,7 @@ class Place extends Model
     // Imágenes del lugar
     public function images(): HasMany
     {
-        return $this->hasMany(PlaceImage::class);
+        return $this->hasMany(PlaceImage::class)->orderBy('is_primary', 'desc');
     }
 
     /* Accessors */

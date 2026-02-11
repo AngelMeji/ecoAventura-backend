@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlaceImage extends Model
 {
-    protected $fillable = ['place_id', 'image_path'];
+    protected $fillable = ['place_id', 'image_path', 'is_primary'];
+
+    protected $casts = [
+        'is_primary' => 'boolean',
+    ];
 
     // Append 'full_url' to JSON
     protected $appends = ['full_url'];

@@ -160,9 +160,13 @@ class PlaceController extends Controller
 
         // Subir imágenes
         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
+            $primaryIndex = $request->input('primary_image_index', 0);
+            foreach ($request->file('images') as $index => $image) {
                 $path = $image->store('places', 'public');
-                $place->images()->create(['image_path' => $path]);
+                $place->images()->create([
+                    'image_path' => $path,
+                    'is_primary' => (int) $index === (int) $primaryIndex
+                ]);
             }
         }
 
@@ -203,6 +207,11 @@ class PlaceController extends Controller
             'duration' => 'sometimes|required|string|max:255',
             'best_season' => 'sometimes|required|string|max:255',
             'status' => 'sometimes|in:pending,approved,rejected,needs_fix',
+            'images' => 'sometimes|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+            'delete_images' => 'sometimes|string', // JSON array of IDs
+            'primary_image_id' => 'sometimes|integer|exists:place_images,id',
+            'primary_image_index' => 'sometimes|integer',
         ]);
 
         /* Si cambia el nombre, cambia el slug */
@@ -234,9 +243,49 @@ class PlaceController extends Controller
 
         $place->update($data);
 
+        // --- Gestión de Imágenes ---
+
+        // 1. Eliminar imágenes
+        if ($request->filled('delete_images')) {
+            $idsToDelete = json_decode($request->delete_images, true);
+            if (is_array($idsToDelete)) {
+                $imagesToDelete = $place->images()->whereIn('id', $idsToDelete)->get();
+                foreach ($imagesToDelete as $img) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($img->image_path);
+                    $img->delete();
+                }
+            }
+        }
+
+        // 2. Si se especifica una nueva primaria (antes de subir nuevas o después)
+        // Si viene primary_image_id, es una imagen que ya existe (o que acabamos de dejar)
+        if ($request->filled('primary_image_id')) {
+            $place->images()->update(['is_primary' => false]);
+            $place->images()->where('id', $request->primary_image_id)->update(['is_primary' => true]);
+        }
+
+        // 3. Subir nuevas imágenes
+        if ($request->hasFile('images')) {
+            // Si viene primary_image_index, significa que una de las NUEVAS será la primaria
+            $primaryIndex = $request->input('primary_image_index');
+
+            if ($primaryIndex !== null) {
+                // Resetear primarias anteriores ya que vamos a poner una nueva
+                $place->images()->update(['is_primary' => false]);
+            }
+
+            foreach ($request->file('images') as $index => $image) {
+                $path = $image->store('places', 'public');
+                $place->images()->create([
+                    'image_path' => $path,
+                    'is_primary' => ($primaryIndex !== null && (int) $index === (int) $primaryIndex)
+                ]);
+            }
+        }
+
         return response()->json([
             'message' => 'Lugar actualizado correctamente',
-            'place' => $place
+            'place' => $place->load('images')
         ]);
     }
 
