@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\ReviewController; // Ensure this is imported
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ChatbotController;
+use App\Http\Controllers\Api\PartnerRequestController;
+
 
 /* ---------- AUTH (Public) ---------- */
 Route::post('/register', [AuthController::class, 'register']);
@@ -35,6 +37,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::put('/me/password', [ProfileController::class, 'updatePassword']);
+
+    // PARTNER REQUEST
+    Route::post('/partner-requests', [PartnerRequestController::class, 'store']);
+
 
     // PLACES (Resource)
     Route::apiResource('places', PlaceController::class)->except(['index', 'show']); // Index/Show are public
@@ -71,7 +77,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+
+        // PARTNER REQUESTS MANAGEMENT
+        Route::get('/admin/partner-requests', [PartnerRequestController::class, 'index']);
+        Route::patch('/admin/partner-requests/{id}/approve', [PartnerRequestController::class, 'approve']);
+        Route::patch('/admin/partner-requests/{id}/reject', [PartnerRequestController::class, 'reject']);
     });
+
+    // NOTIFICATIONS (accessible to ALL authenticated users)
+    Route::get('/notifications', [PartnerRequestController::class, 'getNotifications']);
+    Route::patch('/notifications/{id}/read', [PartnerRequestController::class, 'markAsRead']);
+
 
     // User Profile
     Route::match(['put', 'post'], '/me/profile', [ProfileController::class, 'update']);

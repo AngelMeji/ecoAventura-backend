@@ -32,10 +32,11 @@ class PartnerController extends Controller
             // Mis lugares mejor valorados
             'top_places' => $user->places()
                 ->with('images')
+                ->withAvg('reviews', 'rating')
                 ->where('status', 'approved')
-                ->orderByDesc('average_rating')
+                ->orderByDesc('reviews_avg_rating')
                 ->take(5)
-                ->get(['id', 'name', 'average_rating', 'slug']),
+                ->get(),
         ];
 
         return response()->json([
