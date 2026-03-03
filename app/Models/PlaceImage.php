@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PlaceImage extends Model
 {
-    protected $fillable = ['place_id', 'image_path', 'is_primary'];
+    protected $fillable = [
+        'place_id',
+        'image_path',
+        'is_primary',
+        'created_at',
+        'updated_at',
+    ];
 
     protected $casts = [
         'is_primary' => 'boolean',
