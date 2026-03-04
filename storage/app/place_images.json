@@ -1,0 +1,642 @@
+[
+    {
+        "id": "11",
+        "place_id": "17",
+        "image_path": "places\/eWZoqMUoTZO28otdZ0WTZQjgNFtjRinoV1Amfi4U.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 05:32:29",
+        "updated_at": "2026-02-11 05:32:29"
+    },
+    {
+        "id": "12",
+        "place_id": "17",
+        "image_path": "places\/1Uyac5UPNgikqPFyZ3M6CAqvZG7B33jZQDGMC4GX.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 05:32:29",
+        "updated_at": "2026-02-11 05:32:29"
+    },
+    {
+        "id": "13",
+        "place_id": "17",
+        "image_path": "places\/AdRu02sabLRX2Fxv91uDGzmciX5MZJlbdJxjBI1Z.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 05:32:29",
+        "updated_at": "2026-02-11 05:32:29"
+    },
+    {
+        "id": "16",
+        "place_id": "19",
+        "image_path": "places\/H2zOMzAvhTYGt5MSsW7np4xzcbBeu1hRo0Z0rTii.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 05:51:25",
+        "updated_at": "2026-02-11 15:31:07"
+    },
+    {
+        "id": "17",
+        "place_id": "20",
+        "image_path": "places\/LQfpazqDYfs7OOjY0szYswH57XI4V5qTcWhhXOAP.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 05:59:20",
+        "updated_at": "2026-02-11 05:59:20"
+    },
+    {
+        "id": "18",
+        "place_id": "21",
+        "image_path": "places\/9PwrjyDUjUgBqCAAWuc411Uy7ALKsprEOpJMjjR3.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 06:02:35",
+        "updated_at": "2026-02-11 15:20:58"
+    },
+    {
+        "id": "19",
+        "place_id": "22",
+        "image_path": "places\/jyqxhoGrET5PMrQFa9J7HKOipBLJrRi56MtQTr9s.webp",
+        "is_primary": "0",
+        "created_at": "2026-02-11 06:06:49",
+        "updated_at": "2026-02-11 06:06:49"
+    },
+    {
+        "id": "20",
+        "place_id": "23",
+        "image_path": "places\/rEmagcke0YtwWyNQkBFN8vGH84T4naJAnO5N9k9e.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 06:09:42",
+        "updated_at": "2026-02-11 06:09:42"
+    },
+    {
+        "id": "21",
+        "place_id": "24",
+        "image_path": "places\/ysuQdFPa0IDFgU2e76yxy91vEKS6mfWVamv7nDDP.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 06:12:57",
+        "updated_at": "2026-02-11 06:12:57"
+    },
+    {
+        "id": "22",
+        "place_id": "25",
+        "image_path": "places\/abhO7F8ceoV1XDhJBZNgKOdXUBWXK1m0b0HDw9YX.webp",
+        "is_primary": "0",
+        "created_at": "2026-02-11 06:18:23",
+        "updated_at": "2026-02-11 14:19:00"
+    },
+    {
+        "id": "23",
+        "place_id": "25",
+        "image_path": "places\/RcKgiXEUWS5pdh6oeoy9oP4h29xuPovu1OVfXgR9.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 14:19:00",
+        "updated_at": "2026-02-11 14:19:00"
+    },
+    {
+        "id": "24",
+        "place_id": "24",
+        "image_path": "places\/4Qb3V6WNjlRmyKdiZBsrZCMtTCQxtFxcQMjYqWBm.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 14:50:41",
+        "updated_at": "2026-02-11 14:50:41"
+    },
+    {
+        "id": "25",
+        "place_id": "24",
+        "image_path": "places\/8VdVeIEnN9fYY8vEMaghrxX73Rb8csnIj5zLIuJg.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 14:50:41",
+        "updated_at": "2026-02-11 14:50:41"
+    },
+    {
+        "id": "26",
+        "place_id": "24",
+        "image_path": "places\/QbvmEsf40Z0orF48MmwmerjCt1CeuvcvvgdzHPGW.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 14:50:41",
+        "updated_at": "2026-02-11 14:50:41"
+    },
+    {
+        "id": "27",
+        "place_id": "24",
+        "image_path": "places\/4gGT3oYKESEqzViGSGweeH9l68b9pJ5VscvnPlZz.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 14:50:41",
+        "updated_at": "2026-02-11 14:50:41"
+    },
+    {
+        "id": "28",
+        "place_id": "23",
+        "image_path": "places\/iNtkpaflSQRQ3aaEgMAwM1Yk4d6z7cpIu7RYAr7c.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:01:19",
+        "updated_at": "2026-02-11 15:01:19"
+    },
+    {
+        "id": "29",
+        "place_id": "23",
+        "image_path": "places\/t5KRnCVxTJ3Tf4LoA7zHixm35Z6ByzI0gDVU6n1k.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:01:19",
+        "updated_at": "2026-02-11 15:01:19"
+    },
+    {
+        "id": "30",
+        "place_id": "22",
+        "image_path": "places\/6a3c1Fj8DlKgCStFgFC86dvtJazbCFFXDDK09DNS.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:13:26",
+        "updated_at": "2026-02-11 15:13:26"
+    },
+    {
+        "id": "31",
+        "place_id": "22",
+        "image_path": "places\/WZlvFoeheEEPuOe2pIwiNoibiQXGYHES1fcwAIqS.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:13:26",
+        "updated_at": "2026-02-11 15:13:26"
+    },
+    {
+        "id": "32",
+        "place_id": "22",
+        "image_path": "places\/HaQVo3vfqiFSgZ8WwIOrTKDolPibBA5kUMi9b1Ko.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:13:26",
+        "updated_at": "2026-02-11 15:13:26"
+    },
+    {
+        "id": "33",
+        "place_id": "22",
+        "image_path": "places\/MOQwRtNz5qFahSyzMBAvu77twF8gqKiS2SPxf32Y.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:13:26",
+        "updated_at": "2026-02-11 15:13:26"
+    },
+    {
+        "id": "34",
+        "place_id": "22",
+        "image_path": "places\/piSYyvWrjNz9Zvz59vNe4ZKVmttOHQxuqjnar6v4.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:13:26",
+        "updated_at": "2026-02-11 15:13:26"
+    },
+    {
+        "id": "35",
+        "place_id": "21",
+        "image_path": "places\/xxNuQSTQfWBDPt3uemAjHsD3cmrnIV46o1t8XsJD.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:20:58",
+        "updated_at": "2026-02-11 15:20:58"
+    },
+    {
+        "id": "36",
+        "place_id": "21",
+        "image_path": "places\/3bTuyzQhosV1JgZ5VW0O7ASUqlOoRc7WNdm56TVN.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:20:58",
+        "updated_at": "2026-02-11 15:20:58"
+    },
+    {
+        "id": "37",
+        "place_id": "21",
+        "image_path": "places\/tYxhP8DnonmWaUSb9kZHzUpspy5Mgw6oX54gdJEN.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 15:20:58",
+        "updated_at": "2026-02-11 15:20:58"
+    },
+    {
+        "id": "38",
+        "place_id": "20",
+        "image_path": "places\/cy75SvKLhkNJes6X5FwdoHkpaEZTUjHPQULrU3DR.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:25:37",
+        "updated_at": "2026-02-11 15:25:37"
+    },
+    {
+        "id": "39",
+        "place_id": "20",
+        "image_path": "places\/Hxz4i3repEnNU2RPAwzayqCm6Eccd6fRxy3VILZ4.webp",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:25:37",
+        "updated_at": "2026-02-11 15:25:37"
+    },
+    {
+        "id": "40",
+        "place_id": "20",
+        "image_path": "places\/mwVxOw8nRksbMC9T6ng0EYn95qC7vPzuan2DlKw0.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:25:37",
+        "updated_at": "2026-02-11 15:25:37"
+    },
+    {
+        "id": "41",
+        "place_id": "19",
+        "image_path": "places\/2t1A0IBm6i4SvHYUKyr8wrBJpxa4ErnHi1RcGBHk.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 15:31:07",
+        "updated_at": "2026-02-11 15:31:07"
+    },
+    {
+        "id": "42",
+        "place_id": "19",
+        "image_path": "places\/SLEo6hvfMp1jVQXWkuUL3COfOCsNWrjh8LfQrCRy.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:31:07",
+        "updated_at": "2026-02-11 15:31:07"
+    },
+    {
+        "id": "43",
+        "place_id": "19",
+        "image_path": "places\/eAOhZ2rpTd5Upb8w1eOzeccBhgLOJGcVZP0Xtody.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:31:07",
+        "updated_at": "2026-02-11 15:31:07"
+    },
+    {
+        "id": "44",
+        "place_id": "19",
+        "image_path": "places\/kJ6tuUCS8L7irPAAZjl6ubH1IEgRqkSxJDk0njdP.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:31:07",
+        "updated_at": "2026-02-11 15:31:07"
+    },
+    {
+        "id": "45",
+        "place_id": "26",
+        "image_path": "places\/QlyWhqN3EJACt69lKC0BuNQ9I1bvbOnK0kDUcYJy.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 15:54:14",
+        "updated_at": "2026-02-11 15:54:14"
+    },
+    {
+        "id": "46",
+        "place_id": "26",
+        "image_path": "places\/gTIPY7J7Ddw0T9IesV0MtL2A4NGDDPLllYmiZurT.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 15:54:14",
+        "updated_at": "2026-02-11 15:54:14"
+    },
+    {
+        "id": "47",
+        "place_id": "27",
+        "image_path": "places\/xh7lNHTpKu0LJ2FfLZ9PlaIkGzuhMzpe1Lk38j6P.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 16:01:32",
+        "updated_at": "2026-02-11 16:03:55"
+    },
+    {
+        "id": "48",
+        "place_id": "27",
+        "image_path": "places\/UjB4cKLhXnmLxHyVsgOZKKIlN474Zma7zg7FRCHJ.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 16:01:32",
+        "updated_at": "2026-02-11 16:03:55"
+    },
+    {
+        "id": "49",
+        "place_id": "28",
+        "image_path": "places\/XNyWudTzVsndLdC2Q9zbIEYlTiKhSt6uP2ZZdBFb.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 16:11:24",
+        "updated_at": "2026-02-11 16:11:24"
+    },
+    {
+        "id": "50",
+        "place_id": "28",
+        "image_path": "places\/cG8b2XpeG71jKW94b9noblaUjrgdtx9GuMXuJnAm.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 16:11:24",
+        "updated_at": "2026-02-11 16:11:24"
+    },
+    {
+        "id": "51",
+        "place_id": "28",
+        "image_path": "places\/FII6YBGBw5WvlbBMdFUWFo35kujxiIiw16yTlIHc.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 16:11:24",
+        "updated_at": "2026-02-11 16:11:24"
+    },
+    {
+        "id": "53",
+        "place_id": "30",
+        "image_path": "places\/b8j2GqHDu16wwASDXfdJKW0EnPdn6pQdHqR5LyFd.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-11 16:25:23",
+        "updated_at": "2026-02-11 16:25:23"
+    },
+    {
+        "id": "54",
+        "place_id": "30",
+        "image_path": "places\/KjMiepQfYIsbYCDbvHRbvg3cKrQR8MmHOSteYkoM.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 16:25:23",
+        "updated_at": "2026-02-11 16:25:23"
+    },
+    {
+        "id": "55",
+        "place_id": "30",
+        "image_path": "places\/Hc36wUfBiylgmxAQnJVHRFMe1QegfARwlpK7NLwW.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-11 16:25:23",
+        "updated_at": "2026-02-11 16:25:23"
+    },
+    {
+        "id": "66",
+        "place_id": "34",
+        "image_path": "places\/EMMugCGXhJewBtYtJFLzZccYlpmD3PiAJb2aPT8x.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-12 13:04:08",
+        "updated_at": "2026-02-12 13:04:08"
+    },
+    {
+        "id": "67",
+        "place_id": "34",
+        "image_path": "places\/QQFV5MkVAhKRuJ0XWUzEjRMAPOUxseYAnttbopQf.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-12 13:04:08",
+        "updated_at": "2026-02-12 13:04:08"
+    },
+    {
+        "id": "68",
+        "place_id": "34",
+        "image_path": "places\/VA3c2W97D6DPlKqRoX9oogJIwAxRL2Dtr5SXpDDg.webp",
+        "is_primary": "0",
+        "created_at": "2026-02-12 13:04:08",
+        "updated_at": "2026-02-12 13:04:08"
+    },
+    {
+        "id": "83",
+        "place_id": "39",
+        "image_path": "places\/RT8Tqwv6RuTU5w3BsfsmdqiqmlxQ6vv8Fg3MEe5s.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-15 17:50:07",
+        "updated_at": "2026-02-15 17:50:07"
+    },
+    {
+        "id": "84",
+        "place_id": "39",
+        "image_path": "places\/2nk6NJn0vwfJRIZ0y9l8lIePV2kYdVdJZSUZTCZZ.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-15 17:50:07",
+        "updated_at": "2026-02-15 17:50:07"
+    },
+    {
+        "id": "85",
+        "place_id": "39",
+        "image_path": "places\/GL0wRec98sTVgfIK8ZNfAtD5bgFcr1rQfQf6yt9L.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-15 17:50:07",
+        "updated_at": "2026-02-15 17:50:07"
+    },
+    {
+        "id": "86",
+        "place_id": "40",
+        "image_path": "places\/OFhAGJt649eitLARjJx1qd4UBnRKxo9NAenfcwqn.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-15 17:58:23",
+        "updated_at": "2026-02-15 17:58:23"
+    },
+    {
+        "id": "87",
+        "place_id": "40",
+        "image_path": "places\/nV0Nc8hhMywpj5BgzPpIQJ1mmoHrUdtrfbnX0qYR.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-15 17:58:23",
+        "updated_at": "2026-02-15 17:58:23"
+    },
+    {
+        "id": "88",
+        "place_id": "40",
+        "image_path": "places\/FVYlS2ZuqfrsLtlclYt0AggNCx50ETRgOWnvVrGT.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-15 17:58:23",
+        "updated_at": "2026-02-15 17:58:23"
+    },
+    {
+        "id": "89",
+        "place_id": "41",
+        "image_path": "places\/f3OIzFLqhS63pQGeyJ9mfO7GqRA3IufK2OYZF3Zo.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-15 18:02:56",
+        "updated_at": "2026-02-15 18:04:36"
+    },
+    {
+        "id": "90",
+        "place_id": "41",
+        "image_path": "places\/mkCJ20TaMlPY126CDYhbA21PfrPavnk60HgMN38j.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-15 18:02:56",
+        "updated_at": "2026-02-15 18:04:36"
+    },
+    {
+        "id": "91",
+        "place_id": "42",
+        "image_path": "places\/tpmPQKEWrbVmzdkqNIsF2Xw400fDWVi4JK0VnleW.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-15 18:23:29",
+        "updated_at": "2026-02-15 18:23:29"
+    },
+    {
+        "id": "97",
+        "place_id": "36",
+        "image_path": "places\/bWfJGyFNYsRQ6Zd7FbrFGIbGNfMY23qN8UlXwJpF.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 12:24:10",
+        "updated_at": "2026-02-17 12:27:55"
+    },
+    {
+        "id": "98",
+        "place_id": "36",
+        "image_path": "places\/u2FumV6YZzcDusKmWL9uNe2NO1T7iq6pKbTfdqwu.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:27:55",
+        "updated_at": "2026-02-17 12:27:55"
+    },
+    {
+        "id": "99",
+        "place_id": "36",
+        "image_path": "places\/pUIF2ng88RyEKzXpwyAdx3JBfQdCEsa1g0gTaOAN.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:27:55",
+        "updated_at": "2026-02-17 12:27:55"
+    },
+    {
+        "id": "100",
+        "place_id": "36",
+        "image_path": "places\/x87ULeX8fQSGl1unfXmpE3ey08G1iyIf5QVGg4Kn.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:27:55",
+        "updated_at": "2026-02-17 12:27:55"
+    },
+    {
+        "id": "103",
+        "place_id": "43",
+        "image_path": "places\/gryQgSSv4Ge6EWiQ4Y8vdffxczQsmDwzZiFosPSZ.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 12:38:25",
+        "updated_at": "2026-02-17 12:39:16"
+    },
+    {
+        "id": "104",
+        "place_id": "44",
+        "image_path": "places\/iNVP4yGCAz9t2sTRjsktHfRUnnhXFuGZr3zJOtM2.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 12:41:13",
+        "updated_at": "2026-02-17 12:41:13"
+    },
+    {
+        "id": "105",
+        "place_id": "44",
+        "image_path": "places\/braVHelObS9z3PQ642U96XsfuPtiiNP41xHkMgcl.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:41:13",
+        "updated_at": "2026-02-17 12:41:13"
+    },
+    {
+        "id": "106",
+        "place_id": "44",
+        "image_path": "places\/XvXQrYtiB9ObnjMjuftHDnkd1et9Aiy2RgAjACQk.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:41:13",
+        "updated_at": "2026-02-17 12:41:13"
+    },
+    {
+        "id": "107",
+        "place_id": "37",
+        "image_path": "places\/7dWSv0m1JGZEWPz0GeThs21aylcVNT8ya2H8AyX9.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 12:49:06",
+        "updated_at": "2026-02-17 12:49:06"
+    },
+    {
+        "id": "108",
+        "place_id": "37",
+        "image_path": "places\/atODJHsNYMjqU7gfazlC3Qi1oygUoI5jdPf63AYz.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:49:06",
+        "updated_at": "2026-02-17 12:49:06"
+    },
+    {
+        "id": "109",
+        "place_id": "37",
+        "image_path": "places\/qZVdNnVMZsYt8YZGzHvfKj12APOFG8UHVjngnqCA.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:49:06",
+        "updated_at": "2026-02-17 12:49:06"
+    },
+    {
+        "id": "110",
+        "place_id": "35",
+        "image_path": "places\/35gIlxR8VfbGUoZiRNKujEPMtxmvsbdhfHeiUXL5.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:52:33",
+        "updated_at": "2026-02-17 12:52:33"
+    },
+    {
+        "id": "111",
+        "place_id": "35",
+        "image_path": "places\/vjobIkwW12r02JRfiyXuU3haf9egD6SAYV6ABiyE.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:52:33",
+        "updated_at": "2026-02-17 12:52:33"
+    },
+    {
+        "id": "112",
+        "place_id": "35",
+        "image_path": "places\/0t0oGRePVYAOovX0PyT7pjhrXvlvOQPHH6lxQ0Te.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 12:52:33",
+        "updated_at": "2026-02-17 12:52:33"
+    },
+    {
+        "id": "113",
+        "place_id": "35",
+        "image_path": "places\/KV9LbQq65q6zBbrxPkQ8RHrMOymHUAy4d9qDHf6X.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:52:33",
+        "updated_at": "2026-02-17 12:52:33"
+    },
+    {
+        "id": "114",
+        "place_id": "33",
+        "image_path": "places\/cVwm9juld3uRbPluv4d47iLJ5p9Uv0GkslSYUuxb.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 12:55:33",
+        "updated_at": "2026-02-17 12:55:33"
+    },
+    {
+        "id": "115",
+        "place_id": "33",
+        "image_path": "places\/nL0KcC5sTDi9AsKOEaSGhsRtNCNpI9EzGJhGE3LI.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 12:55:33",
+        "updated_at": "2026-02-17 12:55:33"
+    },
+    {
+        "id": "116",
+        "place_id": "32",
+        "image_path": "places\/jVyAlAiW93h4KxXVOBGjnIWlLhyodwkc1d7Vpl6E.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 13:00:23",
+        "updated_at": "2026-02-17 13:00:23"
+    },
+    {
+        "id": "117",
+        "place_id": "32",
+        "image_path": "places\/I7RoHcxoE2zjefVtnoFGZlyhZ79lAAuz2fo0y9VV.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 13:00:23",
+        "updated_at": "2026-02-17 13:00:23"
+    },
+    {
+        "id": "118",
+        "place_id": "32",
+        "image_path": "places\/xq5F54YTur4pJSU0dInchcSXXb68HYytohOhmwAX.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 13:00:23",
+        "updated_at": "2026-02-17 13:00:23"
+    },
+    {
+        "id": "119",
+        "place_id": "31",
+        "image_path": "places\/VZX38XS6ENobMqsaMYegcstAQRHnoCjXxzlezUPT.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 13:03:45",
+        "updated_at": "2026-02-17 13:03:45"
+    },
+    {
+        "id": "120",
+        "place_id": "31",
+        "image_path": "places\/ZkLikzufRJwuYxg9KjRrsz33riZ081gVOh2kw2KM.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 13:03:45",
+        "updated_at": "2026-02-17 13:03:45"
+    },
+    {
+        "id": "121",
+        "place_id": "31",
+        "image_path": "places\/PISFwvPpyRincYYuEREOBiDLIPAYQp4KwWvZPPYp.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 13:03:45",
+        "updated_at": "2026-02-17 13:03:45"
+    },
+    {
+        "id": "122",
+        "place_id": "29",
+        "image_path": "places\/KXd11I0dREkKvGAFyfOqPWPkuzY4MFyFBQSEchue.jpg",
+        "is_primary": "1",
+        "created_at": "2026-02-17 13:11:26",
+        "updated_at": "2026-02-17 13:11:26"
+    },
+    {
+        "id": "123",
+        "place_id": "29",
+        "image_path": "places\/kxHmbUJF4anQaBrvMYkOdy7iwrLwuDAUxVdZdZqT.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 13:11:26",
+        "updated_at": "2026-02-17 13:11:26"
+    },
+    {
+        "id": "124",
+        "place_id": "29",
+        "image_path": "places\/dKnToa1tNd7Tc4EZnp3Dp9P63en8p0LeSd1Y6VAV.jpg",
+        "is_primary": "0",
+        "created_at": "2026-02-17 13:11:26",
+        "updated_at": "2026-02-17 13:11:26"
+    }
+]
