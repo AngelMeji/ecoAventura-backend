@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('place_images', function (Blueprint $table) {
-            $table->boolean('is_primary')->default(false)->after('image_path');
+            if (!Schema::hasColumn('place_images', 'is_primary')) {
+                $table->boolean('is_primary')->default(false)->after('image_path');
+            }
         });
     }
 
