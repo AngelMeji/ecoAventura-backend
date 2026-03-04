@@ -1,3 +1,4 @@
 *
-!places/
 !.gitignore
+!places/
+!places/**
