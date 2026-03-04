@@ -22,6 +22,17 @@ class User extends Authenticatable
         'notifications',
     ];
 
+    protected $appends = ['full_avatar'];
+
+    public function getFullAvatarAttribute()
+    {
+        if (!$this->avatar)
+            return null;
+        if (str_starts_with($this->avatar, 'http'))
+            return $this->avatar;
+        return asset('storage/' . $this->avatar);
+    }
+
     protected $hidden = [
         'password',
         'remember_token',

@@ -1,0 +1,9 @@
+﻿app/Http/Controllers/Api/CategoryController.php
+app/Http/Controllers/Api/PlaceController.php
+app/Models/Place.php
+app/Models/PlaceImage.php
+bootstrap/app.php
+config/cors.php
+database/seeders/CategorySeeder.php
+database/seeders/DatabaseSeeder.php
+routes/api.php

@@ -4,14 +4,215 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Place;
+use App\Models\Review;
+use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
 {
-    public function dashboard(Request $request)
+    /**
+     * Dashboard del Administrador
+     * Muestra estadísticas globales del sistema.
+     */
+    // ESTADÍSTICAS REALES
+    public function stats()
     {
+        // CACHE de 60 segundos para evitar carga excesiva en dashboard
+        $stats = Cache::remember('admin_dashboard_stats', 60, function() {
+            // 1. Un solo query agrupa todos los conteos de places y users
+            $globalCounts = \Illuminate\Support\Facades\DB::table('places')->selectRaw("
+                COUNT(*) as total_places,
+                SUM(status = 'pending') as pending_places,
+                SUM(status = 'approved') as approved_places
+            ")->first();
+
+            $totalUsers    = User::count();
+            $reviewsCount  = Review::count();
+
+            // 2. TOP VALORADO
+            $topRated = Place::withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->orderByDesc('reviews_avg_rating')
+                ->first();
+
+            // 3. MÁS POPULAR (Más favoritos)
+            $mostPopular = Place::withCount('favoritedBy')
+                ->orderByDesc('favorited_by_count')
+                ->first();
+
+            // 4. CATEGORÍA TOP
+            $topCategory = \Illuminate\Support\Facades\DB::table('places')
+                ->join('categories', 'places.category_id', '=', 'categories.id')
+                ->select('categories.name', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+                ->groupBy('categories.name')
+                ->orderByDesc('total')
+                ->first();
+
+            return [
+                'total_users'     => $totalUsers,
+                'total_places'    => (int) ($globalCounts->total_places ?? 0),
+                'pending_places'  => (int) ($globalCounts->pending_places ?? 0),
+                'approved_places' => (int) ($globalCounts->approved_places ?? 0),
+                'reviews_count'   => $reviewsCount,
+                'recent_users'    => User::orderByDesc('created_at')->limit(10)->get(),
+                'recent_reviews'  => Review::with(['user', 'place'])->orderByDesc('created_at')->limit(10)->get(),
+                'top_rated'    => $topRated ? [
+                    'name'   => $topRated->name,
+                    'rating' => $topRated->reviews_avg_rating,
+                    'count'  => $topRated->reviews_count
+                ] : null,
+                'most_popular' => $mostPopular ? [
+                    'name'      => $mostPopular->name,
+                    'favorites' => $mostPopular->favorited_by_count
+                ] : null,
+                'top_category' => $topCategory ? [
+                    'name'  => $topCategory->name,
+                    'count' => $topCategory->total
+                ] : null
+            ];
+        });
+
+        return response()->json(['stats' => $stats]);
+    }
+
+    // TABLA: TODOS LOS LUGARES (Para Admin)
+    public function allPlaces()
+    {
+        // Retorna TODO con relaciones necesarias + Pagina
+        // Incluimos withAvg para evitar N+1 del atributo average_rating
+        return Place::with(['user', 'category', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->latest()
+            ->paginate(15);
+    }
+
+    // TABLA: PENDIENTES
+    public function pendingPlaces()
+    {
+        return Place::where('status', 'pending')
+            ->with(['user', 'category', 'images'])
+            ->withAvg('reviews', 'rating')
+            ->paginate(15);
+    }
+
+    /* =================================
+       GESTIÓN DE USUARIOS (CRUD)
+       ================================= */
+
+    public function indexUsers()
+    {
+        return response()->json(User::latest()->paginate(15));
+    }
+
+    public function createUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|in:admin,partner,user',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => $request->role,
+        ]);
+
         return response()->json([
-            'message' => 'Dashboard de administrador',
-            'user' => $request->user(),
+            'message' => 'Usuario creado correctamente',
+            'user' => $user
+        ], 201);
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
+            'role' => 'sometimes|in:admin,partner,user',
+            'password' => 'nullable|string|min:6', // Opcional
+        ]);
+
+        $data = $request->only(['name', 'email', 'role']);
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        return response()->json([
+            'message' => 'Usuario actualizado correctamente',
+            'user' => $user
+        ]);
+    }
+
+    public function destroyUser($id)
+    {
+        $user = User::findOrFail($id);
+
+        if ($user->id === auth()->id()) {
+            return response()->json([
+                'message' => 'No puedes eliminar tu propia cuenta'
+            ], 403);
+        }
+
+        if ($user->isAdmin()) {
+            return response()->json([
+                'message' => 'No se puede eliminar una cuenta con rol de administrador.'
+            ], 403);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Usuario eliminado correctamente'
+        ]);
+    }
+
+    /* =================================
+       GESTIÓN DE RESEÑAS (Moderación)
+       ================================= */
+
+    /**
+     * Listar todas las reseñas (para moderación)
+     */
+    public function indexReviews()
+    {
+        $reviews = Review::with(['user:id,name,email', 'place:id,name,slug'])
+            ->latest()
+            ->paginate(15);
+
+        // Transform the paginated collection items to include raw_comment
+        $reviews->getCollection()->transform(function ($review) {
+            $review->raw_comment = $review->getRawOriginal('comment');
+            return $review;
+        });
+
+        return response()->json($reviews);
+    }
+
+    /**
+     * Ocultar/Mostrar el comentario de una reseña (toggle)
+     * Mantiene la calificación (rating) visible.
+     */
+    public function toggleHideReview($id)
+    {
+        $review = Review::findOrFail($id);
+
+        $review->is_hidden = !$review->is_hidden;
+        $review->save();
+
+        return response()->json([
+            'message' => $review->is_hidden
+                ? 'Comentario ocultado correctamente'
+                : 'Comentario restaurado correctamente',
+            'review' => array_merge($review->toArray(), ['raw_comment' => $review->getRawOriginal('comment')])
         ]);
     }
 }

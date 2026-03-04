@@ -1,4 +1,6 @@
 *
 !private/
 !public/
+!places.json
+!place_images.json
 !.gitignore

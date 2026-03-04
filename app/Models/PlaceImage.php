@@ -4,46 +4,36 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
+
 
 class PlaceImage extends Model
 {
     protected $fillable = [
         'place_id',
-        'path',
-        'filename',
+        'image_path',
         'is_primary',
-        'order',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
         'is_primary' => 'boolean',
-        'order' => 'integer',
     ];
 
-    /**
-     * Relación con el lugar
-     */
+    // Append 'full_url' to JSON
+    protected $appends = ['full_url'];
+
+    public function getFullUrlAttribute()
+    {
+        if (str_starts_with($this->image_path, 'http')) {
+            return $this->image_path;
+        }
+        return asset('storage/' . $this->image_path);
+    }
+
     public function place(): BelongsTo
     {
         return $this->belongsTo(Place::class);
     }
 
-    /**
-     * Obtener la URL completa de la imagen
-     */
-    public function getUrlAttribute(): string
-    {
-        return Storage::disk('public')->url($this->path);
-    }
-
-    /**
-     * Eliminar el archivo de storage al borrar el registro
-     */
-    protected static function booted(): void
-    {
-        static::deleting(function (PlaceImage $image) {
-            Storage::disk('public')->delete($image->path);
-        });
-    }
 }

@@ -2,33 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use Illuminate\Database\Seeder;
+use App\Models\Category;
 use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Seed las categorías iniciales de ecoAventura
-     */
     public function run(): void
     {
         $categories = [
+            'Avistamiento de aves',
             'Senderismo',
-            'Camping',
-            'Playas',
+            'Paisaje cultural cafetero',
+            'Termales',
+            'Nevados y montañas',
             'Cascadas',
-            'Montañas',
-            'Ríos',
-            'Lagos',
-            'Bosques',
-            'Parques Naturales',
-            'Reservas Ecológicas',
+            'Glamping',
+            'Parques temáticos',
+            'Rios y lagos',
             'Miradores',
-            'Cuevas',
-            'Deportes Extremos',
-            'Observación de Aves',
-            'Turismo Rural',
         ];
 
         foreach ($categories as $name) {
