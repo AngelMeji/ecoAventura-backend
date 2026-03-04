@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Place;
 use App\Models\Review;
+use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
 {
@@ -17,48 +18,62 @@ class AdminController extends Controller
     // ESTADÍSTICAS REALES
     public function stats()
     {
-        // TOP VALORADO
-        $topRated = Place::withAvg('reviews', 'rating')
-            ->withCount('reviews')
-            ->orderByDesc('reviews_avg_rating')
-            ->first();
+        // CACHE de 60 segundos para evitar carga excesiva en dashboard
+        $stats = Cache::remember('admin_dashboard_stats', 60, function() {
+            // 1. Un solo query agrupa todos los conteos de places y users
+            $globalCounts = \Illuminate\Support\Facades\DB::table('places')->selectRaw("
+                COUNT(*) as total_places,
+                SUM(status = 'pending') as pending_places,
+                SUM(status = 'approved') as approved_places
+            ")->first();
 
-        // MÁS POPULAR (Más favoritos)
-        $mostPopular = Place::withCount('favoritedBy')
-            ->orderByDesc('favorited_by_count')
-            ->first();
+            $totalUsers    = User::count();
+            $reviewsCount  = Review::count();
 
-        // CATEGORÍA TOP
-        $topCategory = \Illuminate\Support\Facades\DB::table('places')
-            ->join('categories', 'places.category_id', '=', 'categories.id')
-            ->select('categories.name', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
-            ->groupBy('categories.name')
-            ->orderByDesc('total')
-            ->first();
+            // 2. TOP VALORADO
+            $topRated = Place::withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->orderByDesc('reviews_avg_rating')
+                ->first();
 
-        return response()->json([
-            'stats' => [
-                'total_users' => User::count(),
-                'total_places' => Place::count(),
-                'pending_places' => Place::where('status', 'pending')->count(),
-                'approved_places' => Place::where('status', 'approved')->count(),
-                'reviews_count' => Review::count(),
-                // Objetos detallados para el Dashboard
-                'top_rated' => $topRated ? [
-                    'name' => $topRated->name,
+            // 3. MÁS POPULAR (Más favoritos)
+            $mostPopular = Place::withCount('favoritedBy')
+                ->orderByDesc('favorited_by_count')
+                ->first();
+
+            // 4. CATEGORÍA TOP
+            $topCategory = \Illuminate\Support\Facades\DB::table('places')
+                ->join('categories', 'places.category_id', '=', 'categories.id')
+                ->select('categories.name', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+                ->groupBy('categories.name')
+                ->orderByDesc('total')
+                ->first();
+
+            return [
+                'total_users'     => $totalUsers,
+                'total_places'    => (int) ($globalCounts->total_places ?? 0),
+                'pending_places'  => (int) ($globalCounts->pending_places ?? 0),
+                'approved_places' => (int) ($globalCounts->approved_places ?? 0),
+                'reviews_count'   => $reviewsCount,
+                'recent_users'    => User::orderByDesc('created_at')->limit(10)->get(),
+                'recent_reviews'  => Review::with(['user', 'place'])->orderByDesc('created_at')->limit(10)->get(),
+                'top_rated'    => $topRated ? [
+                    'name'   => $topRated->name,
                     'rating' => $topRated->reviews_avg_rating,
-                    'count' => $topRated->reviews_count
+                    'count'  => $topRated->reviews_count
                 ] : null,
                 'most_popular' => $mostPopular ? [
-                    'name' => $mostPopular->name,
+                    'name'      => $mostPopular->name,
                     'favorites' => $mostPopular->favorited_by_count
                 ] : null,
                 'top_category' => $topCategory ? [
-                    'name' => $topCategory->name,
+                    'name'  => $topCategory->name,
                     'count' => $topCategory->total
                 ] : null
-            ]
-        ]);
+            ];
+        });
+
+        return response()->json(['stats' => $stats]);
     }
 
     // TABLA: TODOS LOS LUGARES (Para Admin)

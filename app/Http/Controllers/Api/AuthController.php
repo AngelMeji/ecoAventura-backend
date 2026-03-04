@@ -14,11 +14,9 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email:rfc,dns|max:255|unique:users',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|max:12|confirmed',
-        ], [
-            'email.email' => 'El correo electrónico no es válido o el dominio no existe.',
         ]);
 
         $user = User::create([
@@ -41,10 +39,8 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email:rfc,dns',
+            'email'    => 'required|email',
             'password' => 'required|string',
-        ], [
-            'email.email' => 'El correo electrónico no es válido o el dominio no existe.',
         ]);
 
         $user = User::where('email', $request->email)->first();

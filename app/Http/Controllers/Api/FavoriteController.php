@@ -12,6 +12,7 @@ class FavoriteController extends Controller
         $favorites = $request->user()
             ->favorites()
             ->with(['place.category', 'place.images'])
+            ->withAvg('place.reviews as place_reviews_avg_rating', 'rating')
             ->latest()
             ->get();
 

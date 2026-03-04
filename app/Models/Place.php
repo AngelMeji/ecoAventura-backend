@@ -72,51 +72,38 @@ class Place extends Model
     /* Accessors */
 
     /* Indica si el lugar es favorito del usuario autenticado */
-    public function getIsFavoriteAttribute(): bool
+    public function getIsFavoriteAttribute($value): bool
     {
-        // 1. Si viene del query con alias (PlaceController)
-        if (array_key_exists('is_favorite', $this->attributes)) {
-            return (bool) $this->attributes['is_favorite'];
+        // Si viene del query con alias (favorites as is_favorite)
+        // El valor de $value ya será el resultado de la subconsulta (1 o 0)
+        // O será el valor de la columna de la base de datos (0 por defecto)
+
+        // Si la relación ya está cargada y no hay un alias que lo sobreescriba explícitamente a true
+        if (!$value && $this->relationLoaded('favorites')) {
+            $user = auth('sanctum')->user() ?? auth()->user();
+            if ($user) {
+                return $this->favorites->contains('user_id', $user->id);
+            }
         }
 
-        // 2. Si viene del query standard (withExists)
-        if (array_key_exists('favorites_exists', $this->attributes)) {
-            return (bool) $this->attributes['favorites_exists'];
-        }
-
-        // 3. Fallback: verificar autenticación (soporte Sanctum y Web)
-        $user = auth('sanctum')->user() ?? auth()->user();
-
-        if (!$user) {
-            return false;
-        }
-
-        // 4. Si la relación ya está cargada
-        if ($this->relationLoaded('favorites')) {
-            return $this->favorites->contains('user_id', $user->id);
-        }
-
-        // 5. Consulta directa
-        return $this->favorites()
-            ->where('user_id', $user->id)
-            ->exists();
+        return (bool) $value;
     }
 
     /* Promedio de calificación del lugar */
-    /* Promedio de calificación del lugar */
-    public function getAverageRatingAttribute(): float
+    public function getAverageRatingAttribute($value): float
     {
-        // 1. Si viene del query con withAvg (PlaceController / AdminController)
-        if (array_key_exists('reviews_avg_rating', $this->attributes)) {
+        // Si viene del query con withAvg (reviews_avg_rating)
+        if (array_key_exists('reviews_avg_rating', $this->attributes) && $this->attributes['reviews_avg_rating'] !== null) {
             return round((float) $this->attributes['reviews_avg_rating'], 1);
         }
 
-        // 2. Si la relación ya está cargada
+        // Si la relación ya está cargada
         if ($this->relationLoaded('reviews')) {
-            return round($this->reviews->avg('rating'), 1);
+            $avg = $this->reviews->avg('rating');
+            return round((float) ($avg ?? 0), 1);
         }
 
-        // 3. Fallback: consulta directa (evitar si es posible)
-        return round($this->reviews()->avg('rating') ?? 0, 1);
+        // Fallback al valor real de la columna en la BD
+        return round((float) ($value ?? 0), 1);
     }
 }

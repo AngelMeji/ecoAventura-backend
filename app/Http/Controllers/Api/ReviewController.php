@@ -27,7 +27,14 @@ class ReviewController extends Controller
         }
 
         // Si es user, ver sus propias reseñas
-        return response()->json($request->user()->reviews()->with('place')->latest()->get());
+        $userReviews = $request->user()->reviews()
+            ->with(['place' => function ($query) {
+                $query->withAvg('reviews', 'rating');
+            }])
+            ->latest()
+            ->get();
+            
+        return response()->json($userReviews);
     }
 
     /**

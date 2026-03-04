@@ -7,6 +7,7 @@ use App\Models\PartnerRequest;
 use App\Models\User;
 use App\Models\Place;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PartnerRequestController extends Controller
@@ -125,21 +126,26 @@ class PartnerRequestController extends Controller
     public function getNotifications(Request $request)
     {
         $user = $request->user();
+        $cacheKey = "notifications_count_{$user->id}";
 
-        if ($user->role === 'admin') {
-            // Admin sees count of pending requests
-            $count = PartnerRequest::where('status', 'pending')->count();
-            return response()->json(['type' => 'admin', 'count' => $count]);
-        } else {
-            // Users see their requests that have been processed but not read
-            $notifications = PartnerRequest::where('user_id', $user->id)
-                ->where('status', '!=', 'pending')
-                ->where('user_read', false)
-                ->orderBy('updated_at', 'desc')
-                ->get();
+        $data = Cache::remember($cacheKey, 10, function() use ($user) {
+            if ($user->role === 'admin') {
+                // Admin sees count of pending requests
+                $count = PartnerRequest::where('status', 'pending')->count();
+                return ['type' => 'admin', 'count' => $count];
+            } else {
+                // Users see their requests that have been processed but not read
+                $notifications = PartnerRequest::where('user_id', $user->id)
+                    ->where('status', '!=', 'pending')
+                    ->where('user_read', false)
+                    ->orderBy('updated_at', 'desc')
+                    ->get();
 
-            return response()->json(['type' => 'user', 'notifications' => $notifications]);
-        }
+                return ['type' => 'user', 'notifications' => $notifications];
+            }
+        });
+
+        return response()->json($data);
     }
 
     public function markAsRead($id)
