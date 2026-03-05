@@ -16,7 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
             HandleCors::class,
-            EnsureFrontendRequestsAreStateful::class,
+            // EnsureFrontendRequestsAreStateful is NOT needed here because this app
+            // uses Bearer token auth (not cookie/session-based SPA auth).
+            // Having it active was causing 419 CSRF errors on all API calls.
         ]);
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,

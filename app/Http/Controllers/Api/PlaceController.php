@@ -15,11 +15,12 @@ class PlaceController extends Controller
      */
     public function index(Request $request)
     {
+        $userId = auth('sanctum')->id();
         $query = Place::with(['category', 'user', 'images'])
             ->withAvg('reviews', 'rating')
             ->withExists([
-                'favorites as is_favorite' => function ($q) {
-                    $q->where('user_id', auth('sanctum')->id());
+                'favorites as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId ?? 0);
                 }
             ]);
 
@@ -63,11 +64,13 @@ class PlaceController extends Controller
      */
     public function show($identifier)
     {
+        $userId = auth('sanctum')->id();
+        \Illuminate\Support\Facades\Log::info('Public route show() - Sanctum User ID: ' . ($userId ?? 'NULL'));
         $query = Place::with(['category', 'user', 'reviews.user', 'images'])
             ->withAvg('reviews', 'rating')
             ->withExists([
-                'favorites as is_favorite' => function ($q) {
-                    $q->where('user_id', auth('sanctum')->id());
+                'favorites as is_favorite' => function ($q) use ($userId) {
+                    $q->where('user_id', $userId ?? 0);
                 }
             ]);
 
