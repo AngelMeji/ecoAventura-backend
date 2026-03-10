@@ -28,6 +28,12 @@ class PlaceImage extends Model
         if (str_starts_with($this->image_path, 'http')) {
             return $this->image_path;
         }
+        
+        // Ensure HTTPS in non-local environments
+        if (env('APP_ENV') !== 'local') {
+            return secure_asset('storage/' . $this->image_path);
+        }
+        
         return asset('storage/' . $this->image_path);
     }
 

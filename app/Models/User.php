@@ -30,6 +30,12 @@ class User extends Authenticatable
             return null;
         if (str_starts_with($this->avatar, 'http'))
             return $this->avatar;
+            
+        // Ensure HTTPS in non-local environments
+        if (env('APP_ENV') !== 'local') {
+            return secure_asset('storage/' . $this->avatar);
+        }
+        
         return asset('storage/' . $this->avatar);
     }
 
