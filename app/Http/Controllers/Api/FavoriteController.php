@@ -11,7 +11,7 @@ class FavoriteController extends Controller
     {
         $favorites = $request->user()
             ->favorites()
-            ->with(['place.category', 'place.images', 'place.reviews'])
+            ->with(['place.category', 'place.images'])
             ->latest()
             ->get();
 
