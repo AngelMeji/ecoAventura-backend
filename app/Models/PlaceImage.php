@@ -26,6 +26,10 @@ class PlaceImage extends Model
     public function getFullUrlAttribute()
     {
         if (str_starts_with($this->image_path, 'http')) {
+            // Si ya es una URL absoluta, forzar HTTPS en producción
+            if (config('app.env') !== 'local') {
+                return str_replace('http://', 'https://', $this->image_path);
+            }
             return $this->image_path;
         }
         return asset('storage/' . $this->image_path);

@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ProfileController extends Controller
 {
@@ -25,11 +29,15 @@ class ProfileController extends Controller
         $user->name = $request->name;
         if ($request->has('bio'))
             $user->bio = $request->bio;
-        // SUBIDA DE IMAGEN
+        // SUBIDA DE IMAGEN con optimización (WebP, max 1200px, 80% calidad)
         if ($request->hasFile('avatar')) {
-            // Guardar en 'public/avatars'
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $path;
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read($request->file('avatar')->getRealPath());
+            $img->scaleDown(width: 1200);
+            $webpData = $img->toWebp(80)->toString();
+            $filename = 'avatars/' . Str::uuid() . '.webp';
+            Storage::disk('public')->put($filename, $webpData);
+            $user->avatar = $filename;
         }
         $user->save();
         return response()->json($user);
