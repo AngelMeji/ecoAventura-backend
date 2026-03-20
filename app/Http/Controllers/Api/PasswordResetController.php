@@ -54,14 +54,14 @@ class PasswordResetController extends Controller
         $request->validate([
             'token'    => ['required'],
             'email'    => ['required', 'email'],
-            'password' => ['required', 'confirmed', 'min:6'],
+            'password' => ['required', 'confirmed', 'min:8'],
         ], [
             'token.required'     => 'El token de restablecimiento es obligatorio.',
             'email.required'     => 'El correo electrónico es obligatorio.',
             'email.email'        => 'El correo electrónico no es válido.',
             'password.required'  => 'La nueva contraseña es obligatoria.',
             'password.confirmed' => 'La confirmación de contraseña no coincide.',
-            'password.min'       => 'La nueva contraseña debe tener al menos 6 caracteres.',
+            'password.min'       => 'La nueva contraseña debe tener al menos 8 caracteres.',
         ]);
 
         $status = Password::reset(

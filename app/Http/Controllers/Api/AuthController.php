@@ -15,7 +15,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
+            'email'    => 'required|string|email:rfc,dns|max:255|unique:users',
             'password' => 'required|string|min:6|max:12|confirmed',
         ]);
 
@@ -26,12 +26,13 @@ class AuthController extends Controller
             'role' => 'user', // por defecto
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Enviar correo de verificación (la notificación personalizada)
+        $user->sendEmailVerificationNotification();
 
         return response()->json([
-            'message' => 'Usuario registrado correctamente',
+            'message' => 'Usuario registrado correctamente. Por favor verifica tu correo electrónico para poder iniciar sesión.',
             'user' => $user,
-            'token' => $token,
+            // 'token' => $token, // Ya no enviamos token al registrarse, deben verificar primero
         ], 201);
     }
 
@@ -49,6 +50,14 @@ class AuthController extends Controller
             throw ValidationException::withMessages([
                 'email' => ['Las credenciales son incorrectas.'],
             ]);
+        }
+
+        // Verificar si el correo ha sido validado
+        if (!$user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Debes verificar tu correo electrónico antes de iniciar sesión.',
+                'needs_verification' => true
+            ], 403);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;

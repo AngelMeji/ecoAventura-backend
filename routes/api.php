@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\PartnerRequestController;
 /* ---------- AUTH (Public) ---------- */
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/google', [\App\Http\Controllers\Api\GoogleAuthController::class, 'handleGoogleLogin']);
 
 /* ---------- PASSWORD RESET (Public) ---------- */
 Route::post('/password/email', [PasswordResetController::class, 'sendResetLink']);
@@ -29,6 +30,16 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/places', [PlaceController::class, 'index']);
 Route::get('/places/{id}', [PlaceController::class, 'show']);
 Route::post('/places/{id}/chat', [ChatbotController::class, 'chat']);
+
+/* ---------- EMAIL VERIFICATION (Route signed) ---------- */
+Route::get('/email/verify/{id}/{hash}', [\App\Http\Controllers\Api\VerificationController::class, 'verify'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+// EMAIL VERIFICATION RESEND (Public, checks email in body)
+Route::post('/email/resend', [\App\Http\Controllers\Api\VerificationController::class, 'resend'])
+    ->middleware('throttle:6,1')
+    ->name('verification.send');
 
 /* ---------- PROTECTED ROUTES ---------- */
 Route::middleware(['auth:sanctum'])->group(function () {
