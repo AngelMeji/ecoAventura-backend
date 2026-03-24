@@ -17,6 +17,15 @@ class AuthController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email:rfc,dns|max:255|unique:users',
             'password' => 'required|string|min:6|max:12|confirmed',
+        ], [
+            'name.required'      => 'El nombre es obligatorio.',
+            'email.required'     => 'El correo electrónico es obligatorio.',
+            'email.email'        => 'Por favor, ingresa un correo electrónico válido.',
+            'email.unique'       => 'Este correo electrónico ya existe registrado en nuestro sistema.',
+            'password.required'  => 'La contraseña es obligatoria.',
+            'password.min'       => 'La contraseña debe tener al menos 6 caracteres.',
+            'password.max'       => 'La contraseña no debe exceder los 12 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $user = User::create([
@@ -42,6 +51,10 @@ class AuthController extends Controller
         $request->validate([
             'email'    => 'required|email',
             'password' => 'required|string',
+        ], [
+            'email.required'    => 'Por favor ingresa tu correo electrónico.',
+            'email.email'       => 'El formato del correo electrónico no es válido.',
+            'password.required' => 'Debes ingresar tu contraseña.',
         ]);
 
         $user = User::where('email', $request->email)->first();
