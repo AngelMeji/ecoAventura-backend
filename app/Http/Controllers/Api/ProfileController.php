@@ -59,10 +59,6 @@ class ProfileController extends Controller
                 'confirmed',
                 \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()->symbols()
             ],
-        ], [
-            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
-            'password.max' => 'La nueva contraseña no debe exceder los 12 caracteres.',
-            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
         $user = $request->user();

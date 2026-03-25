@@ -180,6 +180,12 @@ return [
         'title' => 'título',
         'comment' => 'comentario',
         'rating' => 'calificación',
+        'short_description' => 'descripción corta',
+        'category_id' => 'categoría',
+        'difficulty' => 'dificultad',
+        'duration' => 'duración',
+        'best_season' => 'mejor temporada',
+        'images' => 'imágenes',
     ],
 
 ];

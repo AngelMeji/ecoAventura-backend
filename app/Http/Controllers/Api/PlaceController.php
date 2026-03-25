@@ -122,29 +122,8 @@ class PlaceController extends Controller
             'difficulty' => 'required|in:baja,media,alta,experto',
             'duration' => 'required|string|max:255',
             'best_season' => 'required|string|max:255',
-        ], [
-            // Mensajes personalizados en español
-            'name.required' => 'El nombre del lugar es obligatorio',
-            'category_id.required' => 'Debes seleccionar una categoría',
-            'category_id.exists' => 'La categoría seleccionada no existe',
-            'short_description.required' => 'La descripción corta es obligatoria',
-            'description.required' => 'La descripción completa es obligatoria',
-            'description.min' => 'La descripción debe tener al menos 50 caracteres',
-            'address.required' => 'La dirección es obligatoria',
-            'latitude.required' => 'La latitud es obligatoria',
-            'latitude.between' => 'La latitud debe estar entre -90 y 90',
-            'longitude.required' => 'La longitud es obligatoria',
-            'longitude.between' => 'La longitud debe estar entre -180 y 180',
-            'images.required' => 'Debes subir al menos una imagen',
-            'images.min' => 'Debes subir al menos una imagen',
-            'images.*.image' => 'Todos los archivos deben ser imágenes',
-            'images.*.mimes' => 'Las imágenes deben ser de tipo: jpeg, png, jpg, gif o webp',
-            'images.*.max' => 'Cada imagen no puede superar los 5MB',
-            'difficulty.required' => 'La dificultad es obligatoria',
-            'difficulty.in' => 'La dificultad debe ser: baja, media, alta o experto',
-            'duration.required' => 'La duración es obligatoria',
-            'best_season.required' => 'La mejor temporada es obligatoria',
         ]);
+
 
         $place = Place::create([
             'user_id' => $request->user()->id,
