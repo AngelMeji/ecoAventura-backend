@@ -14,13 +14,13 @@ class PasswordUpdateTest extends TestCase
     public function test_user_can_update_password_with_valid_data()
     {
         $user = User::factory()->create([
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('EcoAvent1!*'),
         ]);
 
         $response = $this->actingAs($user)->putJson('/api/me/password', [
-            'current_password' => 'password123',
-            'password' => 'newpassword123',
-            'password_confirmation' => 'newpassword123',
+            'current_password' => 'EcoAvent1!*',
+            'password' => 'EcoAvent2!*',
+            'password_confirmation' => 'EcoAvent2!*',
         ]);
 
         $response->assertStatus(200)
@@ -29,19 +29,19 @@ class PasswordUpdateTest extends TestCase
                 'message' => 'Cambio de contraseña exitoso. Por favor, ingrese nuevamente para iniciar sesión con sus nuevas credenciales.',
             ]);
 
-        $this->assertTrue(Hash::check('newpassword123', $user->fresh()->password));
+        $this->assertTrue(Hash::check('EcoAvent2!*', $user->fresh()->password));
     }
 
     public function test_current_password_must_be_correct()
     {
         $user = User::factory()->create([
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('EcoAvent1!*'),
         ]);
 
         $response = $this->actingAs($user)->putJson('/api/me/password', [
             'current_password' => 'wrongpassword',
-            'password' => 'newpassword123',
-            'password_confirmation' => 'newpassword123',
+            'password' => 'EcoAvent2!*',
+            'password_confirmation' => 'EcoAvent2!*',
         ]);
 
         $response->assertStatus(422)
@@ -51,12 +51,12 @@ class PasswordUpdateTest extends TestCase
     public function test_new_password_must_be_confirmed()
     {
         $user = User::factory()->create([
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('EcoAvent1!*'),
         ]);
 
         $response = $this->actingAs($user)->putJson('/api/me/password', [
-            'current_password' => 'password123',
-            'password' => 'newpassword123',
+            'current_password' => 'EcoAvent1!*',
+            'password' => 'EcoAvent2!*',
             'password_confirmation' => 'mismatch',
         ]);
 
@@ -67,11 +67,11 @@ class PasswordUpdateTest extends TestCase
     public function test_new_password_min_length()
     {
         $user = User::factory()->create([
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('EcoAvent1!*'),
         ]);
 
         $response = $this->actingAs($user)->putJson('/api/me/password', [
-            'current_password' => 'password123',
+            'current_password' => 'EcoAvent1!*',
             'password' => '12345',
             'password_confirmation' => '12345',
         ]);

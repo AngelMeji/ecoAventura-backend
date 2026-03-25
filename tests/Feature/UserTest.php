@@ -18,8 +18,8 @@ class UserTest extends TestCase
         $response = $this->postJson('/api/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'EcoAvent1!*',
+            'password_confirmation' => 'EcoAvent1!*',
         ]);
 
         $response->assertStatus(201)
@@ -39,7 +39,7 @@ class UserTest extends TestCase
     public function test_user_can_login(): void
     {
         $user = User::factory()->create([
-            'password' => bcrypt($password = 'password123'),
+            'password' => bcrypt($password = 'EcoAvent1!*'),
         ]);
 
         $response = $this->postJson('/api/login', [
