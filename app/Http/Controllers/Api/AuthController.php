@@ -24,6 +24,7 @@ class AuthController extends Controller
                 'confirmed',
                 \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()->symbols()
             ],
+            'acceptTerms' => 'accepted',
         ]);
 
         $user = User::create([
