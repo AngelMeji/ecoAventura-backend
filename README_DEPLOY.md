@@ -1,58 +1,36 @@
-# 🚀 Guía de Despliegue - EcoAventura (Dockploy)
+# Guía de Despliegue en Dockploy - EcoAventura
 
-Este documento explica cómo gestionar el despliegue automático del proyecto EcoAventura utilizando **Dockploy**. El proyecto está dividido en dos partes principales: el **Backend (Laravel)** y el **Frontend (React/Vite)**.
+Este proyecto está configurado para un despliegue automático continuo mediante **Dockploy**. Cualquier cambio subido a la rama principal (`main`) del repositorio de GitHub activará automáticamente un nuevo "build" y despliegue en el servidor.
 
-## 🔄 Flujo de CI/CD (Despliegue Automático)
+## Configuración para Nuevas Organizaciones
 
-El sistema está configurado para un despligue continuo (CI/CD):
-
-1. **Push a Git**: Cada vez que se realiza un `git push` a la rama configurada (generalmente `main`), Dockploy detecta el cambio.
-2. **Build Automático**: El servidor inicia automáticamente un proceso de "rebuild" que incluye:
-   - Instalación de dependencias (Composer para PHP, NPM para JS).
-   - Generación de archivos estáticos (Frontend build).
-   - Ejecución de optimizaciones de caché en Laravel.
-3. **Despliegue**: Una vez terminada la construcción, la nueva versión se publica sin intervención manual.
-
----
-
-## ⚙️ Configuración para Nuevas Organizaciones
-
-Si una nueva organización desea implementar este proyecto, debe seguir estos pasos:
+Si una nueva organización desea utilizar este proyecto, debe seguir estos pasos para configurar su propio entorno de despliegue:
 
 ### 1. Variables de Entorno (.env)
 
-Es crucial configurar correctamente las URLs y credenciales en el panel de Dockploy o en los archivos `.env` del servidor.
+Es fundamental configurar correctamente las URLs en ambos entornos para que la comunicación entre el Frontend y el Backend, así como la carga de imágenes, funcione correctamente.
 
-#### 🖥️ Backend (ecoAventura-backend)
-Modificar las siguientes variables para que apunten al dominio de producción:
+#### Backend (.env)
+- `APP_URL`: La URL pública de tu API (ej: `https://api.tu-organizacion.com`). Esta URL es vital para que el servidor genere correctamente los enlaces a las imágenes almacenadas.
+- `FRONTEND_URL`: La URL de tu aplicación frontend (ej: `https://tu-organizacion.com`). Se utiliza para configurar CORS y permitir peticiones desde el navegador.
 
-- `APP_URL`: URL base de la API (ej: `https://api.tu-organizacion.com`).
-- `FRONTEND_URL`: URL donde estará alojado el frontend (ej: `https://tu-organizacion.com`).
-- `SANCTUM_STATEFUL_DOMAINS`: Los dominios permitidos para sesiones (ej: `tu-organizacion.com,api.tu-organizacion.com`).
-- **Base de Datos**: `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`.
-- **Servicio de Correo**: `RESEND_API_KEY` (Obligatorio para el envío de correos de recuperación).
-- **Google Login**: `GOOGLE_CLIENT_ID` (Si se usa login social).
+#### Frontend (.env)
+- `VITE_API_URL`: La URL de la API del backend con el sufijo `/api` (ej: `https://api.tu-organizacion.com/api`).
 
-#### 🌐 Frontend (ecoAventura-frontend)
-- `VITE_API_URL`: Debe apuntar a la URL pública del backend terminada en `/api` (ej: `https://api.tu-organizacion.com/api`).
+### 2. Flujo de Despliegue Automático
 
----
+1. **Ediciones**: Realiza los cambios necesarios en el código (vistas, lógica de negocio, estilos, etc.).
+2. **Git Push**: Sube tus cambios al repositorio: `git push origin main`.
+3. **Webhooks**: Dockploy recibirá una notificación de GitHub mediante un Webhook.
+4. **Auto-Build**: El servidor ejecutará automáticamente los comandos de construcción:
+   - `composer install` y `php artisan migrate` en el Backend.
+   - `npm install` y `npm run build` en el Frontend.
+5. **Live Update**: Una vez finalizado el build, los cambios se reflejarán inmediatamente en el sitio en vivo.
 
-## 🛠️ Cómo realizar cambios
+### 3. Manejo de Almacenamiento (Storage)
 
-Para que los cambios se vean reflejados en el servidor:
-
-1. Realice las ediciones necesarias localmente.
-2. Asegúrese de que las pruebas pasen (`composer test-db` en el backend).
-3. Realice un commit con un mensaje descriptivo.
-4. Suba los cambios a su repositorio remoto:
-   ```bash
-   git push origin main
-   ```
-5. El servidor recibirá el hook de Dockploy y comenzará el proceso de build de inmediato. No es necesario reiniciar servicios manualmente.
+Asegúrate de que el comando `php artisan storage:link` se haya ejecutado en el servidor para que las imágenes (avatares y lugares) sean accesibles públicamente a través de la URL de almacenamiento (`/storage`).
 
 ---
-
-## 📝 Notas Adicionales
-- Si se añaden nuevas variables de entorno, asegúrese de agregarlas también en la configuración de la aplicación en el dashboard de Dockploy para que estén disponibles durante el tiempo de ejecución.
-- El servidor ejecuta `php artisan migrate` automáticamente si hay nuevas migraciones en el código subido.
+> [!IMPORTANT]
+> Nunca compartas tu archivo `.env` en el repositorio público. Dockploy permite configurar estas variables de forma segura en su panel de administración.
