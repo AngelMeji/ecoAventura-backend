@@ -51,9 +51,17 @@ class ProfileController extends Controller
     {
         $request->validate([
             'current_password' => 'required|string',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'max:12',
+                'confirmed',
+                \Illuminate\Validation\Rules\Password::min(8)->mixedCase()->numbers()->symbols()
+            ],
         ], [
-            'password.min' => 'La nueva contraseña debe tener al menos 6 caracteres.',
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.max' => 'La nueva contraseña no debe exceder los 12 caracteres.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
         ]);
 
