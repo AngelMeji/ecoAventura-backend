@@ -28,9 +28,19 @@ class User extends Authenticatable
     {
         if (!$this->avatar)
             return null;
-        if (str_starts_with($this->avatar, 'http'))
+        if (str_starts_with($this->avatar, 'http')) {
+            // Forzar HTTPS en producción
+            if (config('app.env') !== 'local') {
+                return str_replace('http://', 'https://', $this->avatar);
+            }
             return $this->avatar;
-        return asset('storage/' . $this->avatar);
+        }
+        $url = asset('storage/' . $this->avatar);
+        // Forzar HTTPS en producción
+        if (config('app.env') !== 'local') {
+            $url = str_replace('http://', 'https://', $url);
+        }
+        return $url;
     }
 
     protected $hidden = [
